@@ -1,0 +1,432 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Character.h"
+#include "PlayerControllerBase.h"
+#include "WeaponDataAsset.h"
+#include "HealthComponent.h"
+#include "WeaponBase.h"
+#include "GenericTeamAgentInterface.h"
+#include "ModifiableAttribute.h"
+#include "CharacterBase.generated.h"
+
+class UCameraComponent;
+class USpringArmComponent;
+class AWeaponBase;
+class UHealthComponent;
+class UBehaviorTree;
+class USpawnUnitAsset;
+class UWidgetComponent;
+class UUserWidget;
+class UCharacterPerkComponent;
+class UCharacterAttack;
+class UManaComponent;
+class USceneComponent;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCharacterBaseGameplayEvent, ACharacterBase*, Character);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCharacterBaseGameplayEvent_OneInt, ACharacterBase*, Character, int, value);
+
+UCLASS()
+class MEMORIA_API ACharacterBase : public ACharacter, public IGenericTeamAgentInterface
+{
+	GENERATED_BODY()
+
+	friend APlayerControllerBase;
+
+public:
+	// Sets default values for this character's properties
+	ACharacterBase();
+
+	/** Returns controller for this actor. */
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE APlayerControllerBase* GetPlayerControllerBase()
+	{
+		return Cast<APlayerControllerBase>(GetController());
+	};
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE bool HasWeapon(UWeaponDataAsset* weapon)
+	{
+		return WeaponToLevelMap.Contains(weapon);
+	}
+
+	// Returns nullptr if weapon does not exist.
+	FORCEINLINE const int* GetWeaponCurrentLevel(const UWeaponDataAsset* weapon)
+	{
+		return WeaponToLevelMap.Find(weapon);
+	}
+
+	FORCEINLINE float GetCurrentMatter() { return CurrentMatter; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE int GetTeamNumber() { return HealthComponent->TeamNumber; }
+
+	UFUNCTION(BlueprintCallable)
+	void ModifyCurrentMatter(float delta);
+
+	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable, Category = "Equipment")
+	void UpgradeWeapon(UWeaponDataAsset* weapon);
+	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable, Category = "Equipment")
+	void AddLevelsToWeapon(UWeaponDataAsset* weapon, int levels);
+
+	UFUNCTION(NetMulticast, Reliable, WithValidation, BlueprintCallable, Category = "Equipment")
+	void SetWeapon(UWeaponDataAsset* weapon);
+
+	UFUNCTION(NetMulticast, Reliable, WithValidation, BlueprintCallable, Category = "Equipment")
+	void EquipWeapon(TSubclassOf<AWeaponBase> Weapon);
+
+	
+	FORCEINLINE USkeletalMeshComponent* GetWeaponMeshComponent() { return 
+		(EquippedWeapon != nullptr) ? EquippedWeapon->WeaponMeshComponent : GetMesh(); 
+	}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	USpawnUnitAsset* SpawnUnitAsset;
+
+	virtual void PossessedByPlayerControllerBase(APlayerControllerBase* controllerBase);
+	UFUNCTION(BlueprintImplementableEvent, Category = "CharacterBase Events")
+	void OnReceivePossessedByPlayerControllerBase(APlayerControllerBase* controllerBase);
+
+	virtual void UnPossessedByPlayerControllerBase(APlayerControllerBase* controllerBase);
+	UFUNCTION(BlueprintImplementableEvent, Category = "CharacterBase Events")
+	void OnReceiveUnPossessedByPlayerControllerBase(APlayerControllerBase* controllerBase);
+
+	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable, Category = "CharacterBase")
+	virtual void DestroySelf();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CharacterBase Events")
+	TArray<AActor*> ActorsToIgnoreWhileAttacking;
+
+	/* Gameplay Events */
+
+	UPROPERTY(BlueprintAssignable, Category = "CharacterBase Events")
+	FCharacterBaseGameplayEvent OnBoostActivated;
+	UPROPERTY(BlueprintAssignable, Category = "CharacterBase Events")
+	FCharacterBaseGameplayEvent OnBoostOffCooldown;
+
+	UPROPERTY(BlueprintAssignable, Category = "CharacterBase Events")
+	FCharacterBaseGameplayEvent OnDestroy;
+
+	UPROPERTY(BlueprintAssignable, Category = "CharacterBase Events")
+	FCharacterBaseGameplayEvent OnPrimaryStart;
+	UPROPERTY(BlueprintAssignable, Category = "CharacterBase Events")
+	FCharacterBaseGameplayEvent OnPrimaryEnd;
+
+	UPROPERTY(BlueprintAssignable, Category = "CharacterBase Events")
+	FCharacterBaseGameplayEvent OnSecondaryStart;
+	UPROPERTY(BlueprintAssignable, Category = "CharacterBase Events")
+	FCharacterBaseGameplayEvent OnSecondaryEnd;
+
+	UPROPERTY(BlueprintAssignable, Category = "CharacterBase Events")
+	FCharacterBaseGameplayEvent_OneInt OnPrimaryShot;
+	UPROPERTY(BlueprintAssignable, Category = "CharacterBase Events")
+	FCharacterBaseGameplayEvent_OneInt OnSecondaryShot;
+	
+	UPROPERTY(BlueprintAssignable, Category = "CharacterBase Events")
+	FCharacterBaseGameplayEvent_OneInt OnJumpStart;
+	UPROPERTY(BlueprintAssignable, Category = "CharacterBase Events")
+	FCharacterBaseGameplayEvent_OneInt OnJumpEnd;
+
+	/* End of Gameplay Events*/
+
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Equipment")
+	AWeaponBase* EquippedWeapon;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera")
+	UCameraComponent* MainCamera;
+
+    /* Gameplay Properties */
+
+    /* General Gameplay Value used during GameModeStates, has no meaning in and of itself */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
+    FModifiableAttribute GameplayScoreValue;
+
+protected:
+
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Equipment")
+	TMap<UWeaponDataAsset*, int> WeaponToLevelMap;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera")
+	USpringArmComponent* SpringArmComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera")
+	float CameraSensitivity;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	float CurrentMatter;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Equipment")
+	TSubclassOf<AWeaponBase> DefaultWeaponClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Equipment")
+	FName WeaponSocketName;
+
+	/**
+	 * Gameplay components
+	 */
+
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "CharacterBase")
+	void OnBeginPlayComplete();
+public:
+	UPROPERTY(Replicated, VisibleDefaultsOnly, BlueprintReadWrite, Category = "Gameplay")
+	UHealthComponent* HealthComponent;
+
+	UPROPERTY(Replicated, VisibleDefaultsOnly, BlueprintReadWrite, Category = "Gameplay")
+	UManaComponent* ManaComponent;
+
+	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly, Category = "Components")
+	UCapsuleComponent* GameplayCollisionComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	UBehaviorTree* UnitBehaviorTreeAsset;
+
+	/**
+	 * Widgets / Widget Components
+	 */
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
+	USceneComponent* WidgetRootComponent;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
+	UWidgetComponent* GameplayWidget;
+
+	// Crosshair, only spawned when possessed by a PlayerControllerBase
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
+	UUserWidget* CrosshairWidget;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
+	TSubclassOf<UUserWidget> CrosshairWidgetClass;
+
+	/**
+	 * Runtime variables
+	 */
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "CharacterBase")
+	TArray< UCharacterPerkComponent* > CharacterPerks;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "CharacterBase")
+	TArray< TSubclassOf<UCharacterAttack> > AttacksClasses;
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "CharacterBase")
+	TArray< UCharacterAttack* > Attacks;
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	FORCEINLINE UCharacterAttack* GetPrimaryAttack()
+	{
+		return (Attacks.Num() > 0) ? Attacks[0] : nullptr;
+	};
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	FORCEINLINE UCharacterAttack* GetSecondaryAttack()
+	{
+		return (Attacks.Num() > 1) ? Attacks[1] : nullptr;
+	};
+
+
+	/**
+	 * Initialization
+	 */
+
+	/**
+	 * AI Blackboard Initialization
+	 */
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|AI")
+	FModifiableAttribute MinEngagementRange;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|AI")
+	FModifiableAttribute MaxEngagementRange;
+
+	/**
+	 * Movement Methods
+	 */
+protected:
+	virtual void MoveForward(float value);
+	UFUNCTION(BlueprintImplementableEvent, Category = "Movement")
+	void ReceiveMoveForward(float value);
+
+	virtual void MoveRight(float value);
+	UFUNCTION(BlueprintImplementableEvent, Category = "Movement")
+	void ReceiveMoveRight(float value);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	virtual void MoveUp(float value);
+	UFUNCTION(BlueprintImplementableEvent, Category = "Movement")
+	void ReceiveMoveUp(float value);
+
+	/**
+	 * Actions
+	 */
+	// Start an attack given an index. Returns true if there's a valid attack
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	bool AttackStart(int index);
+	// Ends an attack given an index. Returns true if there's a valid attack
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	bool AttackEnd(int index);
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	virtual void PrimaryFireStart();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Action")
+	void ReceivePrimaryFireStart();
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	virtual void PrimaryFireEnd();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Action")
+	void ReceivePrimaryFireEnd();
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	virtual void SecondaryFireStart();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Action")
+	void ReceiveSecondaryFireStart();
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	virtual void SecondaryFireEnd();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Action")
+	void ReceiveSecondaryFireEnd();
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	virtual void Special1Start();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Action")
+	void ReceiveSpecial1Start();
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	virtual void Special1End();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Action")
+	void ReceiveSpecial1End();
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	virtual void Special2Start();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Action")
+	void ReceiveSpecial2Start();
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	virtual void Special2End();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Action")
+	void ReceiveSpecial2End();
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	virtual void ReloadStart();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Action")
+	void ReceiveReloadStart();
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	virtual void ReloadEnd();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Action")
+	void ReceiveReloadEnd();
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	virtual void PreviousEquipment();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Action")
+	void ReceivePreviousEquipment();
+	
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	virtual void NextEquipment();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Action")
+	void ReceiveNextEquipment();
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	virtual void MovementModStart();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Action")
+	void ReceiveMovementModStart();
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	virtual void MovementModEnd();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Action")
+	void ReceiveMovementModEnd();
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	virtual void JumpStart();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Action")
+	void ReceiveJumpStart();
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	virtual void JumpEnd();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Action")
+	void ReceiveJumpEnd();
+
+	/**
+	 * General
+	 */
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	virtual void InteractStart();
+	UFUNCTION(BlueprintImplementableEvent, Category = "General")
+	void ReceiveInteractStart();
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	virtual void InteractEnd();
+	UFUNCTION(BlueprintImplementableEvent, Category = "General")
+	void ReceiveInteractEnd();
+
+	virtual void Escape();
+	UFUNCTION(BlueprintImplementableEvent, Category = "General")
+	void ReceiveEscape();
+
+	virtual void Confirm();
+	UFUNCTION(BlueprintImplementableEvent, Category = "General")
+	void ReceiveConfirm();
+
+	virtual void Pause();
+	UFUNCTION(BlueprintImplementableEvent, Category = "General")
+	void ReceivePause();
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	virtual void Contextual();
+	UFUNCTION(BlueprintImplementableEvent, Category = "General")
+	void ReceiveContextual();
+
+	/**
+	 * Thrusts player in a direction based on current velocity and input direction.
+	 */
+	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable, Category = "Advanced Movement")
+	void BoostAction();
+
+	UFUNCTION(NetMulticast, Reliable, BlueprintCallable, Category = "Advanced Movement")
+	void PlayBoostEffects();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Advanced Movement")
+	float Boost_Force;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Advanced Movement")
+	float Boost_Air_Force;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Advanced Movement")
+	float Boost_Cooldown;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Advanced Movement")
+	float b_CanBoost;
+
+	FTimerHandle Boost_Cooldown_TimerHandle;
+
+	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable, Category = "Advanced Movement")
+	void AddImpulseToCharacterInDirectionWithMagnitude(const FVector directionalVector, const float impulseMagnutide);
+
+	/**
+	 * Visual/Sound Effects
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundBase* BoosterSound;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visuals")
+	FVector BoosterParticleScale;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Visuals")
+	UParticleSystem* BoosterParticleSystem;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visuals")
+	FName BoosterEndSocketName;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visuals")
+	FName NozzleEndSocketName;
+
+
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+public:
+	virtual void SetGenericTeamId(const FGenericTeamId& TeamID) override;
+
+	virtual FGenericTeamId GetGenericTeamId() const override;
+
+};

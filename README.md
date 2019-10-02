@@ -1,1 +1,3 @@
-initial readme
+# rc-memoria
+
+Memoria
