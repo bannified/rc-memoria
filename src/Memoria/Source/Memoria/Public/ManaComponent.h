@@ -50,7 +50,7 @@ public:
 	FManaChangeDelegate OnManaChangeEvent;
 
 	UFUNCTION(BlueprintCallable, Category = "ManaComponent")
-	void ModifyMana(float value);
+	void ModifyMana(float value, bool overflow = false);
 
 	FTimerHandle ReloadTimerHandle;
 

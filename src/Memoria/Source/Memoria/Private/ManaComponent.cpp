@@ -38,9 +38,13 @@ void UManaComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	// ...
 }
 
-void UManaComponent::ModifyMana(float value)
+void UManaComponent::ModifyMana(float value, bool overflow)
 {
 	CurrentMana += value;
+	if (!overflow) {
+		CurrentMana = FMath::Max(CurrentMana + value, MaxMana);
+	}
+	
 	OnManaChangeEvent.Broadcast(Character, this);
 }
 
