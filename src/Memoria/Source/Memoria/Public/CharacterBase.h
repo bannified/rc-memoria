@@ -129,6 +129,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "CharacterBase Events")
 	FCharacterBaseGameplayEvent_OneInt OnJumpEnd;
 
+	UPROPERTY(BlueprintCallable, Category = "CharacterBase Events")
+	FCharacterBaseGameplayEvent OnAttackTrigger_AnimNotify;
+
+	UPROPERTY(BlueprintCallable, Category = "CharacterBase Events")
+	FCharacterBaseGameplayEvent OnAttackEnd_AnimNotify;
+
 	/* End of Gameplay Events*/
 
 	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Equipment")
@@ -211,6 +217,9 @@ public:
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "CharacterBase")
 	TArray< UCharacterAttack* > Attacks;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CharacterBase")
+	UCharacterAttack* CurrentActiveAttack;
 
 	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
 	FORCEINLINE UCharacterAttack* GetPrimaryAttack()

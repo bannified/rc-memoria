@@ -284,6 +284,16 @@ bool ACharacterBase::AttackStart(int index)
 		return false;
 	}
 
+	if (CurrentActiveAttack != nullptr) 
+	{
+		if (!CurrentActiveAttack->IsInterruptable) 
+		{
+			return false; // Do not interrupt the ongoing attack
+		}
+	}
+
+	CurrentActiveAttack = Attacks[index];
+
 	Attacks[index]->AttackStart();
 	return true;
 }
@@ -299,6 +309,12 @@ bool ACharacterBase::AttackEnd(int index)
 	}
 
 	Attacks[index]->AttackEnd();
+
+	if (CurrentActiveAttack == Attacks[index]) {
+		CurrentActiveAttack = nullptr;
+		return false;
+	}
+
 	return true;
 }
 
@@ -306,15 +322,7 @@ void ACharacterBase::PrimaryFireStart()
 {
 	OnPrimaryStart.Broadcast(this);
 
-	if (Attacks.Num() < 1) {
-		return;
-	}
-
-	if (Attacks[0] == nullptr) {
-		return;
-	}
-
-	Attacks[0]->AttackStart();
+	AttackStart(0);
 
 	ReceivePrimaryFireStart();
 }
@@ -323,15 +331,7 @@ void ACharacterBase::PrimaryFireEnd()
 {
 	OnPrimaryEnd.Broadcast(this);
 
-	if (Attacks.Num() < 1) {
-		return;
-	}
-
-	if (Attacks[0] == nullptr) {
-		return;
-	}
-
-	Attacks[0]->AttackEnd();
+	AttackEnd(0);
 
 	ReceivePrimaryFireEnd();
 }
@@ -340,15 +340,7 @@ void ACharacterBase::SecondaryFireStart()
 {
 	OnSecondaryStart.Broadcast(this);
 
-	if (Attacks.Num() < 2) {
-		return;
-	}
-
-	if (Attacks[1] == nullptr) {
-		return;
-	}
-
-	Attacks[1]->AttackStart();
+	AttackStart(1);
 
 	ReceiveSecondaryFireStart();
 }
@@ -357,75 +349,35 @@ void ACharacterBase::SecondaryFireEnd()
 {
 	OnSecondaryEnd.Broadcast(this);
 
-	if (Attacks.Num() < 2) {
-		return;
-	}
-
-	if (Attacks[1] == nullptr) {
-		return;
-	}
-
-	Attacks[1]->AttackEnd();
+	AttackEnd(1);
 
 	ReceiveSecondaryFireEnd();
 }
 
 void ACharacterBase::Special1Start()
 {
-	if (Attacks.Num() < 3) {
-		return;
-	}
-
-	if (Attacks[2] == nullptr) {
-		return;
-	}
-
-	Attacks[2]->AttackStart();
+	AttackStart(2);
 
 	ReceiveSpecial1Start();
 }
 
 void ACharacterBase::Special1End()
 {
-	if (Attacks.Num() < 3) {
-		return;
-	}
-
-	if (Attacks[2] == nullptr) {
-		return;
-	}
-
-	Attacks[2]->AttackEnd();
+	AttackEnd(2);
 
 	ReceiveSpecial1End();
 }
 
 void ACharacterBase::Special2Start()
 {
-	if (Attacks.Num() < 4) {
-		return;
-	}
-
-	if (Attacks[3] == nullptr) {
-		return;
-	}
-
-	Attacks[3]->AttackStart();
+	AttackStart(3);
 
 	ReceiveSpecial2Start();
 }
 
 void ACharacterBase::Special2End()
 {
-	if (Attacks.Num() < 4) {
-		return;
-	}
-
-	if (Attacks[3] == nullptr) {
-		return;
-	}
-
-	Attacks[3]->AttackEnd();
+	AttackEnd(3);
 
 	ReceiveSpecial2End();
 }

@@ -84,6 +84,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterAttack|AI")
 	FModifiableAttribute PostAttackDuration;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterAttack")
+	bool IsInterruptable = true;
+
 protected:
 	ACharacterBase* ownerCharacter;
 
