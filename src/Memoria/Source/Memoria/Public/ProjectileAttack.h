@@ -29,7 +29,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterAttack")
 	FModifiableAttribute BulletSpreadAngle;
 
-	virtual void SetupWithCharacter(ACharacterBase* ownerCharacter) override;
+	virtual void SetupWithCharacter(ACharacterBase* character) override;
 
 	virtual void AttackStart() override;
 	virtual void AttackEnd() override;
@@ -51,7 +51,7 @@ public:
 protected:	
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "CharacterAttack")
-	void ReceiveCharacterSetup(ACharacterBase* ownerCharacter);
+	void ReceiveCharacterSetup(ACharacterBase* character);
 
 	AProjectileBase* m_CachedProjectileClass;
 

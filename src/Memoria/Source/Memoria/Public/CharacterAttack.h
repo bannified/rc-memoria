@@ -88,6 +88,7 @@ public:
 	bool IsInterruptable = true;
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CharacterAttack")
 	ACharacterBase* ownerCharacter;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CharacterAttack")

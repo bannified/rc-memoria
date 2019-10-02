@@ -21,9 +21,9 @@ class MEMORIA_API UKinesisBarrierAttack : public UCharacterAttack
 	GENERATED_BODY()
 	
 public:
-	virtual void SetupWithCharacter(ACharacterBase* ownerCharacter) override;
+	virtual void SetupWithCharacter(ACharacterBase* character) override;
 
-	virtual void TeardownWithCharacter(ACharacterBase* ownerCharacter) override;
+	virtual void TeardownWithCharacter(ACharacterBase* character) override;
 
 	virtual void AttackStart() override;
 

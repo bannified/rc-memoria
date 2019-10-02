@@ -42,10 +42,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterAttack|Valkyrie")
 	float FloatGravityScale;
 
-	virtual void SetupWithCharacter(ACharacterBase* ownerCharacter) override;
+	virtual void SetupWithCharacter(ACharacterBase* character) override;
 
 
-	virtual void TeardownWithCharacter(ACharacterBase* ownerCharacter) override;
+	virtual void TeardownWithCharacter(ACharacterBase* character) override;
 
 protected:
 

@@ -24,6 +24,8 @@ class UCharacterPerkComponent;
 class UCharacterAttack;
 class UManaComponent;
 class USceneComponent;
+class UAnimMontage;
+class UWorld;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCharacterBaseGameplayEvent, ACharacterBase*, Character);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCharacterBaseGameplayEvent_OneInt, ACharacterBase*, Character, int, value);
@@ -129,10 +131,10 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "CharacterBase Events")
 	FCharacterBaseGameplayEvent_OneInt OnJumpEnd;
 
-	UPROPERTY(BlueprintCallable, Category = "CharacterBase Events")
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "CharacterBase Events")
 	FCharacterBaseGameplayEvent OnAttackTrigger_AnimNotify;
 
-	UPROPERTY(BlueprintCallable, Category = "CharacterBase Events")
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "CharacterBase Events")
 	FCharacterBaseGameplayEvent OnAttackEnd_AnimNotify;
 
 	/* End of Gameplay Events*/
@@ -232,7 +234,19 @@ public:
 	{
 		return (Attacks.Num() > 1) ? Attacks[1] : nullptr;
 	};
+	
+	/**
+	 * Character Animation montages
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Animation")
+	TMap< FName, UAnimMontage* > NameToAnimMap;
 
+	// Returns nullptr if animation does not exist
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase|Animation")
+	FORCEINLINE UAnimMontage* GetAnimWithName(const FName name)
+	{
+		return *(NameToAnimMap.Find(name));
+	}
 
 	/**
 	 * Initialization
@@ -432,6 +446,12 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	FORCEINLINE UWorld* GetWorldContext()
+	{
+		return GetWorld();
+	}
 
 public:
 	virtual void SetGenericTeamId(const FGenericTeamId& TeamID) override;
