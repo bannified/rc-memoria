@@ -40,7 +40,7 @@ void UProjectileAttack::AttackEnd()
 	Super::AttackEnd();
 
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
-	ownerCharacter->bUseControllerRotationYaw = false;
+	ownerCharacter->bUseControllerRotationYaw = true;
 }
 
 void UProjectileAttack::Fire()
