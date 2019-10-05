@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
 #include "ModifiableAttribute.h"
 #include "SlateBrush.h"
 #include "CharacterAttack.generated.h"
@@ -11,13 +10,10 @@
 class ACharacterBase;
 class UBehaviorTree;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAttackHandler, ACharacterBase*, ownerCharacter, UCharacterAttack*, attack);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAttackHandler, ACharacterBase*, ownerCharacter, ACharacterAttack*, attack);
 
-/**
- * 
- */
-UCLASS(abstract, BlueprintType, Blueprintable)
-class MEMORIA_API UCharacterAttack : public UObject
+UCLASS(config = Game, notplaceable, BlueprintType, Blueprintable, Transient, hideCategories = (Info, Rendering, MovementReplication, Replication, Actor), meta = (ShortTooltip = "Character Attack"))
+class MEMORIA_API ACharacterAttack : public AInfo
 {
 	GENERATED_BODY()
 

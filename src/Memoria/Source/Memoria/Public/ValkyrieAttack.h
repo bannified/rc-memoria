@@ -13,7 +13,7 @@ class ACharacterBase;
  * 
  */
 UCLASS()
-class MEMORIA_API UValkyrieAttack : public UCharacterAttack
+class MEMORIA_API AValkyrieAttack : public ACharacterAttack
 {
 	GENERATED_BODY()
 	

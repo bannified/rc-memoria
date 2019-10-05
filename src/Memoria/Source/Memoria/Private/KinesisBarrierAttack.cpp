@@ -12,7 +12,7 @@
 #include "CharacterBase.h"
 #include "Memoria.h"
 
-void UKinesisBarrierAttack::SetupWithCharacter(ACharacterBase* ownerCharacter)
+void AKinesisBarrierAttack::SetupWithCharacter(ACharacterBase* ownerCharacter)
 {
 	Super::SetupWithCharacter(ownerCharacter);
 
@@ -26,7 +26,7 @@ void UKinesisBarrierAttack::SetupWithCharacter(ACharacterBase* ownerCharacter)
 		BarrierInstance->AttachToActor(ownerCharacter, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 		//	BarrierInstance->AttachToComponent(ownerCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("barrier"));
 
-		BarrierInstance->HealthComponent->OnHealthChanged.AddDynamic(this, &UKinesisBarrierAttack::OnBarrierTakeDamage);
+		BarrierInstance->HealthComponent->OnHealthChanged.AddDynamic(this, &AKinesisBarrierAttack::OnBarrierTakeDamage);
 
 		ownerCharacter->ActorsToIgnoreWhileAttacking.Add(BarrierInstance);
 
@@ -34,7 +34,7 @@ void UKinesisBarrierAttack::SetupWithCharacter(ACharacterBase* ownerCharacter)
 	}
 }
 
-void UKinesisBarrierAttack::TeardownWithCharacter(ACharacterBase* ownerCharacter)
+void AKinesisBarrierAttack::TeardownWithCharacter(ACharacterBase* ownerCharacter)
 {
 	if (BarrierInstance != nullptr) {
 		ownerCharacter->ActorsToIgnoreWhileAttacking.RemoveSingle(BarrierInstance);
@@ -42,7 +42,7 @@ void UKinesisBarrierAttack::TeardownWithCharacter(ACharacterBase* ownerCharacter
 	}
 }
 
-void UKinesisBarrierAttack::AttackStart()
+void AKinesisBarrierAttack::AttackStart()
 {
 	if (ManaCost.GetValue() > ownerCharacter->ManaComponent->CurrentMana) {
 		return;
@@ -59,18 +59,18 @@ void UKinesisBarrierAttack::AttackStart()
 
 	b_OffCooldown = false;
 
-	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &UCharacterAttack::OffCooldown, Cooldown.GetValue(), false);
+	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &ACharacterAttack::OffCooldown, Cooldown.GetValue(), false);
 
 	DamageAbsorbed = 0;
 
 	BarrierInstance->HealthComponent->InitHealth(BarrierInstance->HealthComponent->maxHealth);
 	UMemoriaStaticLibrary::SetActorEnabled(BarrierInstance, true);
 
-	GetWorld()->GetTimerManager().SetTimer(BarrierHoldTimeHandler, this, &UKinesisBarrierAttack::AttackEnd, MaxBarrierDuration.GetValue(), false);
+	GetWorld()->GetTimerManager().SetTimer(BarrierHoldTimeHandler, this, &AKinesisBarrierAttack::AttackEnd, MaxBarrierDuration.GetValue(), false);
 
 }
 
-void UKinesisBarrierAttack::AttackEnd()
+void AKinesisBarrierAttack::AttackEnd()
 {
 	if (!HasAttackStarted) {
 		return;
@@ -133,7 +133,7 @@ void UKinesisBarrierAttack::AttackEnd()
 	HasAttackStarted = false;
 }
 
-void UKinesisBarrierAttack::OnBarrierTakeDamage(UHealthComponent* HealthComp, float health, float healthDelta, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
+void AKinesisBarrierAttack::OnBarrierTakeDamage(UHealthComponent* HealthComp, float health, float healthDelta, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
 {
 	DamageAbsorbed += healthDelta;
 }

@@ -21,7 +21,7 @@ class USpawnUnitAsset;
 class UWidgetComponent;
 class UUserWidget;
 class UCharacterPerkComponent;
-class UCharacterAttack;
+class ACharacterAttack;
 class UManaComponent;
 class USceneComponent;
 class UAnimMontage;
@@ -215,22 +215,22 @@ public:
 	TArray< UCharacterPerkComponent* > CharacterPerks;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "CharacterBase")
-	TArray< TSubclassOf<UCharacterAttack> > AttacksClasses;
+	TArray< TSubclassOf<ACharacterAttack> > AttacksClasses;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "CharacterBase")
-	TArray< UCharacterAttack* > Attacks;
+	TArray< ACharacterAttack* > Attacks;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CharacterBase")
-	UCharacterAttack* CurrentActiveAttack;
+	ACharacterAttack* CurrentActiveAttack;
 
 	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
-	FORCEINLINE UCharacterAttack* GetPrimaryAttack()
+	FORCEINLINE ACharacterAttack* GetPrimaryAttack()
 	{
 		return (Attacks.Num() > 0) ? Attacks[0] : nullptr;
 	};
 
 	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
-	FORCEINLINE UCharacterAttack* GetSecondaryAttack()
+	FORCEINLINE ACharacterAttack* GetSecondaryAttack()
 	{
 		return (Attacks.Num() > 1) ? Attacks[1] : nullptr;
 	};

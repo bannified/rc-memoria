@@ -12,13 +12,13 @@ class AProjectileBase;
  * 
  */
 UCLASS()
-class MEMORIA_API UProjectileAttack : public UCharacterAttack
+class MEMORIA_API AProjectileAttack : public ACharacterAttack
 {
 	GENERATED_BODY()
 	
 public:
 
-	UProjectileAttack();
+	AProjectileAttack();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterAttack")
 	TSubclassOf<AProjectileBase> ProjectileClass;
