@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameControllerBase.h"
+#include "SpawnUnitArray.h"
 #include "SuppressionGameMode.generated.h"
 
 class APerpetualGameModeState;
@@ -24,7 +25,9 @@ protected:
     virtual void BeginPlay() override;
 
 	// Assuming same setting for every perpetual state class for now
-	UPROPERTY(EditDefaultsOnly, Category = "SuppressionGameMode")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SuppressionGameMode")
 	TSubclassOf< APerpetualGameModeState > PerpetualStateClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SuppressionGameMode")
+	TArray< FSpawnUnitArray > SpawnUnitArrays;
 };

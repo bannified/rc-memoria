@@ -19,6 +19,7 @@ class MEMORIA_API ULevelDataAsset : public UPrimaryDataAsset
 	GENERATED_BODY()
 	
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LevelDataAsset")
 	TSubclassOf<AGameControllerBase> GameControllerClass;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "LevelDataAsset")

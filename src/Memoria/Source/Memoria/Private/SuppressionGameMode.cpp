@@ -11,6 +11,10 @@
 void ASuppressionGameMode::StartGame()
 {
 	FGenericTeamId::SetAttitudeSolver(&UMemoriaDeveloperSettings::GetAttitude);
+
+	AGameModeState* nextState = GetWorld()->SpawnActor<APerpetualGameModeState>(PerpetualStateClass, FVector::ZeroVector, FRotator::ZeroRotator);
+
+	MoveToState(nextState);
 }
 
 void ASuppressionGameMode::BeginPlay()

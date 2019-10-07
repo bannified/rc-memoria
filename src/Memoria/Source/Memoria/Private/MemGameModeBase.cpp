@@ -58,6 +58,11 @@ void AMemGameModeBase::StartGame(ULevelDataAsset* LevelData)
 {
 	FGenericTeamId::SetAttitudeSolver(&UMemoriaDeveloperSettings::GetAttitude);
 
+	if (LevelData == nullptr) {
+		PRINT_INFO("MemGameModeBase %s does not have a LevelData.", *(this->GetName()));
+		return;
+	}
+
 	if (GameControllerInstance != nullptr) {
 		GameControllerInstance->Destroy();
 	}
@@ -73,9 +78,12 @@ void AMemGameModeBase::StartGame(ULevelDataAsset* LevelData)
 
 	if (GameControllerInstance != nullptr) {
 		GameControllerInstance->SetupWithLevelData(this, LevelData);
+		LevelData->Setup(GameControllerInstance);
 	}
 
 	CurrentLevelDataAsset = LevelData;
+
+	GameControllerInstance->StartGame();
 }
 
 void AMemGameModeBase::WinGame()
