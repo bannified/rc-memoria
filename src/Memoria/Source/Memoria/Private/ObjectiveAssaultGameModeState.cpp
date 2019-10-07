@@ -7,6 +7,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameControllerBase.h"
 #include "PerpetualGameModeState.h"
 
 void AObjectiveAssaultGameModeState::OnStateEnter(AGameControllerBase* GameMode)
