@@ -8,16 +8,9 @@
 #include "MemoriaDeveloperSettings.h"
 #include "PerpetualGameModeState.h"
 
-void ASuppressionGameMode::StartGame(ULevelDataAsset* LevelData)
+void ASuppressionGameMode::StartGame()
 {
-	//FGenericTeamId::SetAttitudeSolver(&UMemoriaDeveloperSettings::GetAttitude);
-
-	if (InitialStateClass) {
-		APerpetualGameModeState* initialState = GetWorld()->SpawnActor<APerpetualGameModeState>(PerpetualStateClass, FVector::ZeroVector, FRotator::ZeroRotator);
-		initialState->CurrentWaveLayout = CurrentWave;
-		initialState->Init();
-		MoveToState(initialState);
-	}
+	FGenericTeamId::SetAttitudeSolver(&UMemoriaDeveloperSettings::GetAttitude);
 }
 
 void ASuppressionGameMode::BeginPlay()

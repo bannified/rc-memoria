@@ -9,7 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "PerpetualGameModeState.h"
 
-void AObjectiveAssaultGameModeState::OnStateEnter(AMemGameModeBase* GameMode)
+void AObjectiveAssaultGameModeState::OnStateEnter(AGameControllerBase* GameMode)
 {
 	this->GameModeBase = GameMode;
 
@@ -22,12 +22,12 @@ void AObjectiveAssaultGameModeState::OnStateEnter(AMemGameModeBase* GameMode)
 	ReceiveOnStateEnter(GameMode);
 }
 
-void AObjectiveAssaultGameModeState::OnStateStart(AMemGameModeBase* GameMode)
+void AObjectiveAssaultGameModeState::OnStateStart(AGameControllerBase* GameMode)
 {
 
 }
 
-void AObjectiveAssaultGameModeState::OnStateTick(AMemGameModeBase* GameMode, const float DeltaTime)
+void AObjectiveAssaultGameModeState::OnStateTick(AGameControllerBase* GameMode, const float DeltaTime)
 {
 	RunningTime += DeltaTime;
 
@@ -43,12 +43,12 @@ void AObjectiveAssaultGameModeState::OnStateTick(AMemGameModeBase* GameMode, con
 
 }
 
-void AObjectiveAssaultGameModeState::OnStateStop(AMemGameModeBase* GameMode)
+void AObjectiveAssaultGameModeState::OnStateStop(AGameControllerBase* GameMode)
 {
 
 }
 
-void AObjectiveAssaultGameModeState::OnStateExit(AMemGameModeBase* GameMode)
+void AObjectiveAssaultGameModeState::OnStateExit(AGameControllerBase* GameMode)
 {
 	Super::OnStateEnter(GameMode);
 

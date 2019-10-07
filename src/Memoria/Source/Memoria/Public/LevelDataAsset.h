@@ -8,6 +8,7 @@
 #include "LevelDataAsset.generated.h"
 
 class AGameStateBase;
+class AGameControllerBase;
 
 /**
  * 
@@ -18,13 +19,17 @@ class MEMORIA_API ULevelDataAsset : public UPrimaryDataAsset
 	GENERATED_BODY()
 	
 public:
+	TSubclassOf<AGameControllerBase> GameControllerClass;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Waves")
-	TArray< FWaveLayout > Waves;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "LevelDataAsset")
+	FString LevelName;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Waves")
-	FString StageName;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "LevelDataAsset")
+	FString LevelDescription;
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void Setup(AGameStateBase* GameState);
+	UFUNCTION(BlueprintCallable, Category = "LevelDataAsset")
+	virtual void Setup(AGameControllerBase* controller);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "LevelDataAsset")
+	void OnReceiveSetup(AGameControllerBase* controller);
 };

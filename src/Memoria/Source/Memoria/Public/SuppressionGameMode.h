@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MemGameModeBase.h"
+#include "GameControllerBase.h"
 #include "SuppressionGameMode.generated.h"
 
 class APerpetualGameModeState;
@@ -12,12 +12,12 @@ class APerpetualGameModeState;
  * 
  */
 UCLASS()
-class MEMORIA_API ASuppressionGameMode : public AMemGameModeBase
+class MEMORIA_API ASuppressionGameMode : public AGameControllerBase
 {
 	GENERATED_BODY()
 
 public:
-	virtual void StartGame(ULevelDataAsset* LevelData) override;
+	virtual void StartGame() override;
 
 protected:
     // Called when the game starts or when spawned

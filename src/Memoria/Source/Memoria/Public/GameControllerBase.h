@@ -18,6 +18,7 @@ class AWaveGameModeState;
 class ASetupGameModeState;
 class APlayerControllerBase;
 class ABase;
+class AMemGameModeBase;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGameAction);
 
@@ -33,6 +34,8 @@ class MEMORIA_API AGameControllerBase : public AInfo
 {
 	GENERATED_BODY()
 public:
+	AGameControllerBase();
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MemGameModeBase|Level")
 	TArray< FSpawnPointArray > SpawnPointsGroups;
 
@@ -47,10 +50,16 @@ public:
 	void MoveToState(AGameModeState* NextState);
 
 	UFUNCTION(BlueprintCallable, Category = "MemGameModeBase|Lifecycle")
-	virtual void StartGame(ULevelDataAsset* LevelData);
+	virtual void StartGame();
+	UFUNCTION(BlueprintImplementableEvent, Category = "MemGameModeBase|Lifecycle")
+	void OnReceiveStartGame();
 
-	UFUNCTION(BlueprintCallable, Category = "MemGameModeBase|Manipulation")
-	void NextWave();
+	UFUNCTION(BlueprintCallable, Category = "MemGameModeBase|Lifecycle")
+	virtual void SetupWithLevelData(AMemGameModeBase* GameMode, ULevelDataAsset* LevelData);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "MemGameModeBase|Lifecycle")
+	void OnReceiveSetupWithLevelData(AMemGameModeBase* GameMode, ULevelDataAsset* LevelData);
+
 	UFUNCTION(BlueprintCallable, Category = "MemGameModeBase|Manipulation")
 	void WinGame();
 	UFUNCTION(BlueprintCallable, Category = "MemGameModeBase|Manipulation")
@@ -66,7 +75,7 @@ public:
     void SpawnQueryFinished(TSharedPtr<FEnvQueryResult> Result);
 
 	UFUNCTION(BlueprintCallable, Category = "MemGameModeBase|Spawning")
-	void SpawnWithSpawnUnit(AMemGameModeBase* GameMode, FSpawnUnit SpawnUnit);
+	void SpawnWithSpawnUnit(AGameControllerBase* GameMode, FSpawnUnit SpawnUnit);
 
 	UFUNCTION(BlueprintCallable, Category = "MemGameModeBase|Spawning")
 	class ACharacterBase* SpawnWithSpawnUnitAssetAtLocation(USpawnUnitAsset* SpawnUnitAsset, const FVector location);
@@ -84,7 +93,7 @@ public:
 	float WaveRunningTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MemGameModeBase|Spawning")
-	ULevelDataAsset* MapLevelDataAsset;
+	ULevelDataAsset* CurrentLevelDataAsset;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MemGameModeBase|Spawning")
 	FWaveLayout CurrentWave;

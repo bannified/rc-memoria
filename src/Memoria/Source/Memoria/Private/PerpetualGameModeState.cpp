@@ -14,6 +14,7 @@
 #include "AttributeModifier.h"
 #include "ModifiableAttribute.h"
 #include "Base.h"
+#include "GameControllerBase.h"
 #include "CharacterBase.h"
 
 void APerpetualGameModeState::Init()
@@ -28,16 +29,16 @@ void APerpetualGameModeState::Init()
 	});
 }
 
-void APerpetualGameModeState::OnStateEnter(AMemGameModeBase* GameMode)
+void APerpetualGameModeState::OnStateEnter(AGameControllerBase* GameMode)
 {
 	this->GameModeBase = GameMode;
 	CurrentSpawnUnitIndex = 0;
 	ReceiveOnStateEnter(GameMode);
 }
 
-void APerpetualGameModeState::OnStateStart(AMemGameModeBase* GameMode)
+void APerpetualGameModeState::OnStateStart(AGameControllerBase* GameMode)
 {
-	//WaveClearedEvent.AddDynamic(GameMode, &AMemGameModeBase::NextWave);
+	//WaveClearedEvent.AddDynamic(GameMode, &AGameControllerBase::NextWave);
 
 	GameMode->OnEnemyUnitSpawned.AddDynamic(this, &APerpetualGameModeState::HandleEnemySpawn);
 
@@ -49,7 +50,7 @@ void APerpetualGameModeState::OnStateStart(AMemGameModeBase* GameMode)
 	ReceiveOnStateStart(GameMode);
 }
 
-void APerpetualGameModeState::OnStateTick(AMemGameModeBase* GameMode, const float DeltaTime)
+void APerpetualGameModeState::OnStateTick(AGameControllerBase* GameMode, const float DeltaTime)
 {
 	RunningTime += DeltaTime;
 	SpawnRunningTime += DeltaTime;
@@ -63,27 +64,27 @@ void APerpetualGameModeState::OnStateTick(AMemGameModeBase* GameMode, const floa
 	}
 	else {
 		// no more units left to spawn. Check for wave clear.
-		AWaveDefenseGameState* gs = GameMode->GetGameState<AWaveDefenseGameState>();
-		if (gs != nullptr) {
-			if (gs->EnemiesLeft <= 0) {
-				//WaveClearedEvent.Broadcast();
-			}
-		}
+		//AWaveDefenseGameState* gs = GameMode->GetGameState<AWaveDefenseGameState>();
+		//if (gs != nullptr) {
+		//	if (gs->EnemiesLeft <= 0) {
+		//		//WaveClearedEvent.Broadcast();
+		//	}
+		//}
 	}
 
 	ReceiveOnStateTick(GameMode, DeltaTime);
 }
 
-void APerpetualGameModeState::OnStateStop(AMemGameModeBase* GameMode)
+void APerpetualGameModeState::OnStateStop(AGameControllerBase* GameMode)
 {
-	//WaveClearedEvent.RemoveDynamic(GameMode, &AMemGameModeBase::NextWave);
+	//WaveClearedEvent.RemoveDynamic(GameMode, &AGameControllerBase::NextWave);
 
 	GameMode->OnEnemyUnitSpawned.RemoveDynamic(this, &APerpetualGameModeState::HandleEnemySpawn);
 
 	ReceiveOnStateStop(GameMode);
 }
 
-void APerpetualGameModeState::OnStateExit(AMemGameModeBase* GameMode)
+void APerpetualGameModeState::OnStateExit(AGameControllerBase* GameMode)
 {
 
 	for (ABase* objective : GameMode->Objectives) {
