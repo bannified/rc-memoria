@@ -98,7 +98,7 @@ void AValkyrieAttack::Float()
 
 	GetWorld()->GetTimerManager().SetTimer(SharedTimerHandle, this, &AValkyrieAttack::StartDescent, FloatDuration, false);
 
-	BarrierInstance->HealthComponent->InitHealth(BarrierInstance->HealthComponent->maxHealth);
+	BarrierInstance->HealthComponent->AlterHealth(BarrierInstance->HealthComponent->maxHealth);
 	UMemoriaStaticLibrary::SetActorEnabled(BarrierInstance, true);
 
 	OnFloatStart.Broadcast(ownerCharacter, this);

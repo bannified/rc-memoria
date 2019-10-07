@@ -21,7 +21,7 @@ void UHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InitHealth(startingHealth);
+	Init();
 
 	//if (GetOwnerRole() == ROLE_Authority)
 	//{
@@ -47,9 +47,20 @@ void UHealthComponent::HandleTakeAnyDamage(AActor* DamagedActor, float Damage, c
 
 	Damage *= FMath::Max(1.0f - DamageResist.GetValue(), 0.0f);
 
-	currentHealth = FMath::Clamp(currentHealth - Damage, 0.0f, maxHealth);
+	float shieldsBefore = CurrentShields;
 
-	OnHealthChanged.Broadcast(this, currentHealth, Damage, DamageType, InstigatedBy, DamageCauser);
+	CurrentShields = FMath::Clamp(CurrentShields - Damage, 0.0f, maxHealth);
+	float shieldsDamageTaken = CurrentShields - shieldsBefore;
+	float leftover = Damage - shieldsDamageTaken;
+
+	float healthBefore = currentHealth;
+
+	currentHealth = FMath::Clamp(currentHealth - leftover, 0.0f, maxHealth);
+
+	float healthDamageTaken = healthBefore - currentHealth;
+
+	OnHealthChanged.Broadcast(this, currentHealth, healthDamageTaken, DamageType, InstigatedBy, DamageCauser);
+	OnShieldsChanged.Broadcast(this, CurrentShields, shieldsDamageTaken, DamageType, InstigatedBy, DamageCauser);
 
 	bIsDead = currentHealth <= 0.0f;
 
@@ -73,26 +84,11 @@ void UHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	// ...
 }
 
-void UHealthComponent::InitHealth(float health)
+void UHealthComponent::Init()
 {
 	currentHealth = startingHealth;
+	CurrentShields = StartingShields;
 	bIsDead = false;
-}
-
-void UHealthComponent::TakeDamage(float damage)
-{
-	currentHealth -= damage;
-
-	if (currentHealth > 0.0f) {
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::SanitizeFloat(currentHealth));
-	}
-	else {
-		//Dead
-		currentHealth = 0.0f;
-		bIsDead = true;
-		DeathEvent.Broadcast();
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Is dead (HealthComponent)"));
-	}
 }
 
 void UHealthComponent::AlterHealth(float Amount)
@@ -112,6 +108,15 @@ void UHealthComponent::AlterHealth(float Amount)
 	if (bIsDead) {
 		DeathEvent.Broadcast();
 	}
+}
+
+void UHealthComponent::AlterShields(float Amount)
+{
+	CurrentShields = FMath::Clamp(CurrentShields + Amount, 0.0f, MaxShields);
+
+	UE_LOG(LogTemp, Log, TEXT("Shields changed: %s (+%s)"), *FString::SanitizeFloat(CurrentShields), *FString::SanitizeFloat(Amount));
+
+	OnShieldsChanged.Broadcast(this, CurrentShields, -Amount, nullptr, nullptr, nullptr);
 }
 
 bool UHealthComponent::IsFriendly(AActor* actor1, AActor* actor2)
