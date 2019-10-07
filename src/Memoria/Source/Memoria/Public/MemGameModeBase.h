@@ -75,10 +75,10 @@ public:
 	UPROPERTY(BlueprintCallable, BlueprintAssignable, Category = "MemGameModeBase|Events")
 	FOnGameEnd OnGameStart;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MemGameModeBase|Level")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MemGameModeBase|Level")
 	bool b_GameWon = false;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MemGameModeBase|GameController")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MemGameModeBase|GameController")
 	AGameControllerBase* GameControllerInstance;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MemGameModeBase|GameController")
