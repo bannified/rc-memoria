@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS(meta = (BlueprintSpawnableComponent))
+UCLASS(Blueprintable, meta = (BlueprintSpawnableComponent))
 class MEMORIA_API UMultiJumpPerkComponent : public UCharacterPerkComponent
 {
 	GENERATED_BODY()

@@ -3,6 +3,8 @@
 
 #include "MemoriaStaticLibrary.h"
 #include "Components/SceneComponent.h"
+#include "CharacterBase.h"
+#include "CharacterPerkComponent.h"
 
 FORCEINLINE_DEBUGGABLE void UMemoriaStaticLibrary::AddModifierToAttribute(FModifiableAttribute& attribute, const FAttributeModifier& mod)
 {
@@ -50,4 +52,12 @@ void UMemoriaStaticLibrary::SetSceneComponentEnabled(USceneComponent* comp, bool
 	else {
 		comp->Deactivate();
 	}
+}
+
+UCharacterPerkComponent* UMemoriaStaticLibrary::AddPerkToCharacterBase(TSubclassOf<UCharacterPerkComponent> perkClass, ACharacterBase* character)
+{
+	UCharacterPerkComponent* perk = NewObject<UCharacterPerkComponent>(character, perkClass);
+	perk->RegisterComponent();
+	perk->Setup(character);
+	return perk;
 }

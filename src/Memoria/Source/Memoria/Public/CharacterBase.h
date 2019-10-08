@@ -248,6 +248,9 @@ public:
 		return *(NameToAnimMap.Find(name));
 	}
 
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase|Perks")
+	UCharacterPerkComponent* AddPerk(TSubclassOf<UCharacterPerkComponent> perkClass);
+
 	/**
 	 * Initialization
 	 */

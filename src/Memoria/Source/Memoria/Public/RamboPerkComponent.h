@@ -13,7 +13,7 @@ class ACharacterAttack;
 /**
  * 
  */
-UCLASS(meta = (BlueprintSpawnableComponent))
+UCLASS(Blueprintable, meta = (BlueprintSpawnableComponent))
 class MEMORIA_API URamboPerkComponent : public UCharacterPerkComponent
 {
 	GENERATED_BODY()
