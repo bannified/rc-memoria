@@ -79,11 +79,10 @@ void AMemGameModeBase::StartGame(ULevelDataAsset* LevelData)
 	if (GameControllerInstance != nullptr) {
 		GameControllerInstance->SetupWithLevelData(this, LevelData);
 		LevelData->Setup(GameControllerInstance);
+		GameControllerInstance->StartGame();
 	}
 
 	CurrentLevelDataAsset = LevelData;
-
-	GameControllerInstance->StartGame();
 }
 
 void AMemGameModeBase::WinGame()
