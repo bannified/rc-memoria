@@ -10,7 +10,7 @@ UHealthComponent::UHealthComponent()
 
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
 }
@@ -31,6 +31,7 @@ void UHealthComponent::BeginPlay()
 			owner->OnTakeAnyDamage.AddDynamic(this, &UHealthComponent::HandleTakeAnyDamage);
 		}
 	//}
+		StartShieldCooldown();
 }
 
 
@@ -44,6 +45,8 @@ void UHealthComponent::HandleTakeAnyDamage(AActor* DamagedActor, float Damage, c
 	//{
 	//	return;
 	//}
+
+	StartShieldCooldown();
 
 	Damage *= FMath::Max(1.0f - DamageResist.GetValue(), 0.0f);
 
@@ -117,6 +120,21 @@ void UHealthComponent::AlterShields(float Amount)
 	UE_LOG(LogTemp, Log, TEXT("Shields changed: %s (+%s)"), *FString::SanitizeFloat(CurrentShields), *FString::SanitizeFloat(Amount));
 
 	OnShieldsChanged.Broadcast(this, CurrentShields, -Amount, nullptr, nullptr, nullptr);
+}
+
+void UHealthComponent::StartShieldCooldown()
+{
+	GetWorld()->GetTimerManager().SetTimer(ShieldsTimer, this, &UHealthComponent::StartShieldRegen, ShieldRegenCooldown.GetValue(), false);
+}
+
+void UHealthComponent::StartShieldRegen()
+{
+	GetWorld()->GetTimerManager().SetTimer(ShieldsTimer, this, &UHealthComponent::ShieldRegenRoutine, ShieldsInterval, true, 0.0f);
+}
+
+void UHealthComponent::ShieldRegenRoutine()
+{
+	AlterShields(ShieldRegenValue.GetValue());
 }
 
 bool UHealthComponent::IsFriendly(AActor* actor1, AActor* actor2)

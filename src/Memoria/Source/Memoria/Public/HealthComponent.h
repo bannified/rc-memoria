@@ -51,7 +51,10 @@ public:
 	float MaxShields;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent|Gameplay")
-	FModifiableAttribute ShieldRegenRate;
+	float ShieldsInterval;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent|Gameplay")
+	FModifiableAttribute ShieldRegenValue;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent|Gameplay")
 	FModifiableAttribute ShieldRegenCooldown;
@@ -84,6 +87,18 @@ public:
 	/** Changes the health value directly, ignoring shields. */
 	UFUNCTION(BlueprintCallable, Category = "HealthComponent")
 	void AlterShields(float Amount);
+
+	UFUNCTION(BlueprintCallable, Category = "HealthComponent")
+	void StartShieldCooldown();
+
+	UFUNCTION(BlueprintCallable, Category = "HealthComponent")
+	void StartShieldRegen();
+
+	UFUNCTION(BlueprintCallable, Category = "HealthComponent")
+	void ShieldRegenRoutine();
+
+	UPROPERTY(BlueprintReadWrite, Category = "HealthComponent")
+	FTimerHandle ShieldsTimer;
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnHealthChangedSignature OnHealthChanged;
