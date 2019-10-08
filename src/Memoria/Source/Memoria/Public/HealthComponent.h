@@ -32,7 +32,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent|Gameplay")
 	float maxHealth;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent|Runtime")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "HealthComponent|Runtime")
 	float currentHealth;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent|Runtime")
@@ -40,6 +40,24 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent|Gameplay")
 	float startingHealth;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent|Gameplay")
+	float StartingShields;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "HealthComponent|Runtime")
+	float CurrentShields;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent|Gameplay")
+	float MaxShields;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent|Gameplay")
+	float ShieldsInterval;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent|Gameplay")
+	FModifiableAttribute ShieldRegenValue;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent|Gameplay")
+	FModifiableAttribute ShieldRegenCooldown;
 
 	UPROPERTY(BlueprintAssignable, Category = "EventDispatchers")
 	FDeathEvent DeathEvent;
@@ -60,18 +78,33 @@ public:
 
 	//Initialize health with specified value
 	UFUNCTION(BlueprintCallable, Category = "HealthComponent")
-	void InitHealth(float health);
+	void Init();
 
-	/** [DEPRECATED] Subtracts `damage` from `currentHealth` */
-	UFUNCTION(BlueprintCallable, Category = "HealthComponent")
-	void TakeDamage(float damage);
-
-	/** Changes the health by parameter */
+	/** Changes the health value directly, ignoring shields. */
 	UFUNCTION(BlueprintCallable, Category = "HealthComponent")
 	void AlterHealth(float Amount);
 
+	/** Changes the health value directly, ignoring shields. */
+	UFUNCTION(BlueprintCallable, Category = "HealthComponent")
+	void AlterShields(float Amount);
+
+	UFUNCTION(BlueprintCallable, Category = "HealthComponent")
+	void StartShieldCooldown();
+
+	UFUNCTION(BlueprintCallable, Category = "HealthComponent")
+	void StartShieldRegen();
+
+	UFUNCTION(BlueprintCallable, Category = "HealthComponent")
+	void ShieldRegenRoutine();
+
+	UPROPERTY(BlueprintReadWrite, Category = "HealthComponent")
+	FTimerHandle ShieldsTimer;
+
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnHealthChangedSignature OnHealthChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnHealthChangedSignature OnShieldsChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnDeathSignature OnDeathEvent;

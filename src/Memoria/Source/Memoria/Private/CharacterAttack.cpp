@@ -3,29 +3,29 @@
 
 #include "CharacterAttack.h"
 
-void UCharacterAttack::SetupWithCharacter(ACharacterBase* character)
+void ACharacterAttack::SetupWithCharacter(ACharacterBase* character)
 {
 	this->ownerCharacter = character;
 
 	OnReceiveSetupWithCharacter(character);
 }
 
-void UCharacterAttack::TeardownWithCharacter(ACharacterBase* ownerCharacter)
+void ACharacterAttack::TeardownWithCharacter(ACharacterBase* ownerCharacter)
 {
 
 }
 
-void UCharacterAttack::AttackStart()
+void ACharacterAttack::AttackStart()
 {
 	ReceiveAttackStart();
 }
 
-void UCharacterAttack::AttackEnd()
+void ACharacterAttack::AttackEnd()
 {
 	ReceiveAttackEnd();
 }
 
-void UCharacterAttack::OffCooldown()
+void ACharacterAttack::OffCooldown()
 {
 	b_OffCooldown = true;
 

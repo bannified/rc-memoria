@@ -9,7 +9,7 @@
 #include "ManaComponent.h"
 #include "MemoriaStaticLibrary.h"
 
-void UValkyrieAttack::AttackStart()
+void AValkyrieAttack::AttackStart()
 {
 	if (ManaCost.GetValue() > ownerCharacter->ManaComponent->CurrentMana) {
 		return;
@@ -24,7 +24,7 @@ void UValkyrieAttack::AttackStart()
 
 	b_OffCooldown = false;
 
-	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &UCharacterAttack::OffCooldown, Cooldown.GetValue(), false);
+	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &ACharacterAttack::OffCooldown, Cooldown.GetValue(), false);
 
 	OriginalGravityScale = ownerCharacter->GetCharacterMovement()->GravityScale;
 
@@ -32,12 +32,12 @@ void UValkyrieAttack::AttackStart()
 
 }
 
-void UValkyrieAttack::AttackEnd()
+void AValkyrieAttack::AttackEnd()
 {
 	// Does nothing? 
 }
 
-void UValkyrieAttack::SetupWithCharacter(ACharacterBase* ownerCharacter)
+void AValkyrieAttack::SetupWithCharacter(ACharacterBase* ownerCharacter)
 {
 	Super::SetupWithCharacter(ownerCharacter);
 
@@ -56,7 +56,7 @@ void UValkyrieAttack::SetupWithCharacter(ACharacterBase* ownerCharacter)
 	}
 }
 
-void UValkyrieAttack::TeardownWithCharacter(ACharacterBase* ownerCharacter)
+void AValkyrieAttack::TeardownWithCharacter(ACharacterBase* ownerCharacter)
 {
 	if (BarrierInstance != nullptr) {
 		ownerCharacter->ActorsToIgnoreWhileAttacking.RemoveSingle(BarrierInstance);
@@ -64,18 +64,18 @@ void UValkyrieAttack::TeardownWithCharacter(ACharacterBase* ownerCharacter)
 	}
 }
 
-void UValkyrieAttack::StartAscend()
+void AValkyrieAttack::StartAscend()
 {
 	ownerCharacter->LaunchCharacter(FVector::UpVector * LaunchVelocity, false, false);
 
 	// Maybe disable the character from using other attacks?
 
-	GetWorld()->GetTimerManager().SetTimer(SharedTimerHandle, this, &UValkyrieAttack::Float, LaunchDuration, false);
+	GetWorld()->GetTimerManager().SetTimer(SharedTimerHandle, this, &AValkyrieAttack::Float, LaunchDuration, false);
 
 	OnAscendStart.Broadcast(ownerCharacter, this);
 }
 
-void UValkyrieAttack::StartDescent()
+void AValkyrieAttack::StartDescent()
 {
 	UCharacterMovementComponent* movementComp = ownerCharacter->GetCharacterMovement();
 
@@ -87,7 +87,7 @@ void UValkyrieAttack::StartDescent()
 	OnDescentStart.Broadcast(ownerCharacter, this);
 }
 
-void UValkyrieAttack::Float()
+void AValkyrieAttack::Float()
 {
 	UCharacterMovementComponent* movementComp = ownerCharacter->GetCharacterMovement();
 
@@ -96,9 +96,9 @@ void UValkyrieAttack::Float()
 
 	movementComp->UpdateComponentVelocity();
 
-	GetWorld()->GetTimerManager().SetTimer(SharedTimerHandle, this, &UValkyrieAttack::StartDescent, FloatDuration, false);
+	GetWorld()->GetTimerManager().SetTimer(SharedTimerHandle, this, &AValkyrieAttack::StartDescent, FloatDuration, false);
 
-	BarrierInstance->HealthComponent->InitHealth(BarrierInstance->HealthComponent->maxHealth);
+	BarrierInstance->HealthComponent->AlterHealth(BarrierInstance->HealthComponent->maxHealth);
 	UMemoriaStaticLibrary::SetActorEnabled(BarrierInstance, true);
 
 	OnFloatStart.Broadcast(ownerCharacter, this);

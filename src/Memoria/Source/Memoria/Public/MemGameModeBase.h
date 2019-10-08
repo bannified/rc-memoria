@@ -25,6 +25,8 @@ class APlayerControllerBase;
 
 class ABase;
 
+class AGameControllerBase;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGameEnd);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnGameModeStateChanged, AGameModeState*, OldState, AGameModeState*, NewState);
@@ -44,12 +46,6 @@ class MEMORIA_API AMemGameModeBase : public AGameModeBase
 public:
     AMemGameModeBase();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MemGameModeBase|Level")
-	TArray< FSpawnPointArray > SpawnPointsGroups;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MemGameModeBase|Level")
-    TArray<ABase*> Objectives;
-
     /**
 	 * State Machine
 	 */
@@ -61,55 +57,15 @@ public:
 	virtual void StartGame(ULevelDataAsset* LevelData);
 
 	UFUNCTION(BlueprintCallable, Category = "MemGameModeBase|Manipulation")
-	void NextWave();
-
-	UFUNCTION(BlueprintCallable, Category = "MemGameModeBase|Manipulation")
 	void WinGame();
 
 	UFUNCTION(BlueprintCallable, Category = "MemGameModeBase|Manipulation")
 	void LoseGame();
 
-	UFUNCTION(BlueprintCallable, Category = "MemGameModeBase|Events")
-	void OnEnemyDestroyed(AActor* EnemyDestroyed);
-
-    /* Spawning */
-	UFUNCTION(BlueprintCallable, Category = "MemGameModeBase|Spawning")
-	virtual void HandleEnemySpawn(AActor* SpawnedEnemy);
-
-    void SpawnQueryFinished(TSharedPtr<FEnvQueryResult> Result);
-
-	UFUNCTION(BlueprintCallable, Category = "MemGameModeBase|Spawning")
-	void SpawnWithSpawnUnit(AMemGameModeBase* GameMode, FSpawnUnit SpawnUnit);
-
-	UFUNCTION(BlueprintCallable, Category = "MemGameModeBase|Spawning")
-	class ACharacterBase* SpawnWithSpawnUnitAssetAtLocation(USpawnUnitAsset* SpawnUnitAsset, const FVector location);
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MemGameModeBase|Spawning")
-	UEnvQuery* SpawnQuery;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MemGameModeBase|Spawning")
-	FSpawnUnit NextSpawnUnit;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MemGameModeBase|Spawning")
-	int WaveNumber;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MemGameModeBase|Spawning")
-	float WaveRunningTime;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MemGameModeBase|Spawning")
-	ULevelDataAsset* MapLevelDataAsset;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MemGameModeBase|Spawning")
-	FWaveLayout CurrentWave;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MemGameModeBase|Spawning")
-	int CurrentSpawnUnitIndex;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MemGameModeBase|Spawning")
-	int CurrentWaveIndex;
+	ULevelDataAsset* CurrentLevelDataAsset;
 
     /* Events */
-
 	UPROPERTY(BlueprintCallable, BlueprintAssignable, Category = "MemGameModeBase|Events")
 	FOnGameEnd OnGameWin;
 
@@ -117,28 +73,16 @@ public:
 	FOnGameEnd OnGameLose;
 
 	UPROPERTY(BlueprintCallable, BlueprintAssignable, Category = "MemGameModeBase|Events")
-	FOnGameEnd OnNextWave;
-
-	UPROPERTY(BlueprintCallable, BlueprintAssignable, Category = "MemGameModeBase|Events")
-	FOnGameEnd OnWaveCleared;
-
-	UPROPERTY(BlueprintCallable, BlueprintAssignable, Category = "MemGameModeBase|Events")
 	FOnGameEnd OnGameStart;
 
-    UPROPERTY(BlueprintCallable, BlueprintAssignable, Category = "MemGameModeBase|Events")
-	FOnEnemyUnitSpawned OnEnemyUnitSpawned;
-
-    UFUNCTION(BlueprintCallable, Category = "Events")
-	virtual void OnEnemyDeath(AActor* Victim, AActor* Killer);
-
-	UFUNCTION(BlueprintCallable, Category = "Events")
-	void OnBaseTakeDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MemGameModeBase|Level")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MemGameModeBase|Level")
 	bool b_GameWon = false;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MemGameModeBase|Lifecycle")
-	TSubclassOf<AGameModeState> InitialStateClass;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MemGameModeBase|GameController")
+	AGameControllerBase* GameControllerInstance;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MemGameModeBase|GameController")
+	TSubclassOf<AGameControllerBase> DefaultGameControllerClass;
 
 protected:
 	// Called when the game starts or when spawned
@@ -157,27 +101,4 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MemGameModeBase|UI")
 	TSubclassOf<UUserWidget> GameHUDWidget;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MemGameModeBase|State")
-	bool b_isWaveOngoing;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MemGameModeBase|Lifecycle")
-	ULevelDataAsset* FallbackLevelData;
-
-	UFUNCTION(BlueprintCallable, Category = "Setup")
-	void SetupSpawnPointGroups();
-
-	/**
-	 * State Machine
-	 */
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MemGameModeBase|State Machine")
-	AGameModeState* SavedState;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MemGameModeBase|State Machine")
-	AGameModeState* CurrentState;
-
-	UPROPERTY(BlueprintAssignable, Category = "MemGameModeBase|State Machine")
-	FOnGameModeStateChanged OnStateChanged;
-
 };

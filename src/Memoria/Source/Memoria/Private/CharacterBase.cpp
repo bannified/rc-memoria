@@ -220,8 +220,8 @@ void ACharacterBase::BeginPlay()
 
 	Attacks.Reserve(AttacksClasses.Num());
 	// Setup Action Components
-	for (TSubclassOf<UCharacterAttack> attackClass : AttacksClasses) {
-		UCharacterAttack* instance = NewObject<UCharacterAttack>(this, attackClass);
+	for (TSubclassOf<ACharacterAttack> attackClass : AttacksClasses) {
+		ACharacterAttack* instance = GetWorld()->SpawnActor<ACharacterAttack>(attackClass, FVector::ZeroVector, FRotator::ZeroRotator);
 		instance->AttackIndex = Attacks.Add(instance);
 		instance->SetupWithCharacter(this);
 	}

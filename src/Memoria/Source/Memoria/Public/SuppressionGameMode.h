@@ -3,7 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MemGameModeBase.h"
+#include "GameControllerBase.h"
+#include "SpawnUnitArray.h"
 #include "SuppressionGameMode.generated.h"
 
 class APerpetualGameModeState;
@@ -12,19 +13,21 @@ class APerpetualGameModeState;
  * 
  */
 UCLASS()
-class MEMORIA_API ASuppressionGameMode : public AMemGameModeBase
+class MEMORIA_API ASuppressionGameMode : public AGameControllerBase
 {
 	GENERATED_BODY()
 
 public:
-	virtual void StartGame(ULevelDataAsset* LevelData) override;
+	virtual void StartGame() override;
 
 protected:
     // Called when the game starts or when spawned
     virtual void BeginPlay() override;
 
 	// Assuming same setting for every perpetual state class for now
-	UPROPERTY(EditDefaultsOnly, Category = "SuppressionGameMode")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SuppressionGameMode")
 	TSubclassOf< APerpetualGameModeState > PerpetualStateClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SuppressionGameMode")
+	TArray< FSpawnUnitArray > SpawnUnitArrays;
 };
