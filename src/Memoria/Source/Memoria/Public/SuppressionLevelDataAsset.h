@@ -19,6 +19,7 @@ public:
 
 	USuppressionLevelDataAsset();
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Suppression")
 	TArray<FSuppressionCheckpoint> Checkpoints;
 
 	virtual void Setup(AGameControllerBase* controller) override;

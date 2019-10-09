@@ -24,7 +24,7 @@ void USuppressionLevelDataAsset::Setup(AGameControllerBase* controller)
 	// Sort in descending order
 	gm->Checkpoints.Sort([](const FSuppressionCheckpoint cp1, const FSuppressionCheckpoint cp2)
 	{
-		return cp1.TargetLevelProgress < cp2.TargetLevelProgress;
+		return cp1.TargetLevelProgress > cp2.TargetLevelProgress;
 	});
 
 	OnReceiveSetup(controller);

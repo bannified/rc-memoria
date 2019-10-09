@@ -17,4 +17,7 @@ struct FSuppressionSpawnPattern
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SpawnUnit")
 	float MaxSpawnInterval;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SpawnUnit")
+	int KillScoreThreshold;
 };
