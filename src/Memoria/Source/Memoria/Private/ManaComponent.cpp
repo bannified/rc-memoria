@@ -42,7 +42,7 @@ void UManaComponent::ModifyMana(float value, bool overflow)
 {
 	CurrentMana += value;
 	if (!overflow) {
-		CurrentMana = FMath::Max(CurrentMana + value, MaxMana);
+		CurrentMana = FMath::Min(CurrentMana, MaxMana);
 	}
 	
 	OnManaChangeEvent.Broadcast(Character, this);
