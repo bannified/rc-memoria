@@ -26,7 +26,7 @@ void AObjectiveAssaultGameModeState::OnStateEnter(AGameControllerBase* GameMode)
 
 void AObjectiveAssaultGameModeState::OnStateStart(AGameControllerBase* GameMode)
 {
-
+	ReceiveOnStateStart(GameMode);
 }
 
 void AObjectiveAssaultGameModeState::OnStateTick(AGameControllerBase* GameMode, const float DeltaTime)
@@ -41,11 +41,12 @@ void AObjectiveAssaultGameModeState::OnStateTick(AGameControllerBase* GameMode, 
 
 		GameModeBase->MoveToState(perpState);
 	}
+	ReceiveOnStateTick(GameMode, DeltaTime);
 }
 
 void AObjectiveAssaultGameModeState::OnStateStop(AGameControllerBase* GameMode)
 {
-
+	ReceiveOnStateStop(GameMode);
 }
 
 void AObjectiveAssaultGameModeState::OnStateExit(AGameControllerBase* GameMode)
@@ -58,6 +59,7 @@ void AObjectiveAssaultGameModeState::OnStateExit(AGameControllerBase* GameMode)
 		UMemoriaStaticLibrary::SetSceneComponentEnabled(objective->DamageTriggerCollider, true);
 	}
 
+	ReceiveOnStateExit(GameMode);
 }
 
 void AObjectiveAssaultGameModeState::Init()
