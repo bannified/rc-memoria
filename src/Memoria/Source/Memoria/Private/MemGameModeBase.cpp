@@ -104,3 +104,8 @@ void AMemGameModeBase::LoseGame()
 
 	OnGameLose.Broadcast();
 }
+
+void AMemGameModeBase::SetAIAttitudeSolver()
+{
+	FGenericTeamId::SetAttitudeSolver(&UMemoriaDeveloperSettings::GetAttitude);
+}
