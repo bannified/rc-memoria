@@ -8,6 +8,7 @@
 #include "ObjectiveAssaultGameModeState.h"
 #include "SuppressionCheckpoint.h"
 #include "SuppressionGameMode.h"
+#include "GameControllerBase.h"
 
 void ASuppressionEliminationGMS::Init()
 {
@@ -29,7 +30,14 @@ void ASuppressionEliminationGMS::OnStateEnter(AGameControllerBase* GameMode)
 
 void ASuppressionEliminationGMS::OnStateStart(AGameControllerBase* GameMode)
 {
-	Super::OnStateStart(GameMode);
+	GameMode->OnEnemyUnitSpawned.AddDynamic(this, &ASuppressionEliminationGMS::HandleEnemySpawn);
+
+	for (ABase* objective : GameMode->Objectives) {
+		// Deactivate shields
+		objective->HealthComponent->DamageResist.BaseValue = 1.0f;
+	}
+
+	ReceiveOnStateStart(GameMode);
 }
 
 void ASuppressionEliminationGMS::OnStateTick(AGameControllerBase* GameMode, const float DeltaTime)
