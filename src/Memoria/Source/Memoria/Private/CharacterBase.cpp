@@ -238,7 +238,7 @@ UCharacterPerkComponent* ACharacterBase::AddPerk(TSubclassOf<UCharacterPerkCompo
 {
 	UCharacterPerkComponent* perk = NewObject<UCharacterPerkComponent>(this, perkClass);
 	perk->RegisterComponent();
-	perk->Setup(this);
+	//perk->Setup(this);
 
 	return perk;
 }
