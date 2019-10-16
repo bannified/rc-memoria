@@ -8,7 +8,8 @@
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameControllerBase.h"
-#include "PerpetualGameModeState.h"
+#include "SuppressionEliminationGMS.h"
+#include "SuppressionGameMode.h"
 
 void AObjectiveAssaultGameModeState::OnStateEnter(AGameControllerBase* GameMode)
 {
@@ -25,7 +26,7 @@ void AObjectiveAssaultGameModeState::OnStateEnter(AGameControllerBase* GameMode)
 
 void AObjectiveAssaultGameModeState::OnStateStart(AGameControllerBase* GameMode)
 {
-
+	ReceiveOnStateStart(GameMode);
 }
 
 void AObjectiveAssaultGameModeState::OnStateTick(AGameControllerBase* GameMode, const float DeltaTime)
@@ -34,19 +35,18 @@ void AObjectiveAssaultGameModeState::OnStateTick(AGameControllerBase* GameMode, 
 
 	if (RunningTime >= Lifetime) {
 		// Transition to PerpetualGameModeState
-		APerpetualGameModeState* perpState = GetWorld()->SpawnActor<APerpetualGameModeState>(PerpetualGameModeStateClass, FVector::ZeroVector, FRotator::ZeroRotator);
+		ASuppressionEliminationGMS* perpState = GetWorld()->SpawnActor<ASuppressionEliminationGMS>(SuppressionEliminationGMSClass, FVector::ZeroVector, FRotator::ZeroRotator);
 		
-		perpState->CurrentWaveLayout = GameMode->CurrentWave;
 		perpState->Init();
 
 		GameModeBase->MoveToState(perpState);
 	}
-
+	ReceiveOnStateTick(GameMode, DeltaTime);
 }
 
 void AObjectiveAssaultGameModeState::OnStateStop(AGameControllerBase* GameMode)
 {
-
+	ReceiveOnStateStop(GameMode);
 }
 
 void AObjectiveAssaultGameModeState::OnStateExit(AGameControllerBase* GameMode)
@@ -59,4 +59,12 @@ void AObjectiveAssaultGameModeState::OnStateExit(AGameControllerBase* GameMode)
 		UMemoriaStaticLibrary::SetSceneComponentEnabled(objective->DamageTriggerCollider, true);
 	}
 
+	ReceiveOnStateExit(GameMode);
+}
+
+void AObjectiveAssaultGameModeState::Init()
+{
+	ASuppressionGameMode* gm = Cast<ASuppressionGameMode>(GameModeBase);
+
+	SuppressionEliminationGMSClass = gm->SuppressionEliminationGMSClass;
 }

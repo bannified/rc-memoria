@@ -6,7 +6,7 @@
 #include "GameModeState.h"
 #include "ObjectiveAssaultGameModeState.generated.h"
 
-class APerpetualGameModeState;
+class ASuppressionEliminationGMS;
 
 /**
  * 
@@ -23,7 +23,7 @@ public:
 	float RunningTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ObjectiveAssault_GMS")
-	TSubclassOf< APerpetualGameModeState > PerpetualGameModeStateClass;
+	TSubclassOf< ASuppressionEliminationGMS > SuppressionEliminationGMSClass;
 
 	virtual void OnStateEnter(AGameControllerBase* GameMode) override;
 
@@ -34,5 +34,7 @@ public:
 	virtual void OnStateStop(AGameControllerBase* GameMode) override;
 
 	virtual void OnStateExit(AGameControllerBase* GameMode) override;
-	
+
+	virtual void Init() override;
+
 };

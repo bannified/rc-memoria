@@ -11,6 +11,7 @@
 #include "MemoriaStaticLibrary.generated.h"
 
 class USceneComponent;
+class UCharacterPerkComponent;
 
 /**
  * 
@@ -42,5 +43,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Actor")
 	static void SetSceneComponentEnabled(UPARAM(ref) USceneComponent* comp, bool enabled);
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	static UCharacterPerkComponent* AddPerkToCharacterBase(UPARAM() TSubclassOf<UCharacterPerkComponent> perkClass, UPARAM() ACharacterBase* character);
 
 };

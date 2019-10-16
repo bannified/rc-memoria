@@ -4,5 +4,6 @@
 
 void ULevelDataAsset::Setup(AGameControllerBase* controller)
 {
+
 	OnReceiveSetup(controller);
 }

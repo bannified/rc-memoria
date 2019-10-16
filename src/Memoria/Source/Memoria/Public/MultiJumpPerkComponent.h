@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS(meta = (BlueprintSpawnableComponent))
+UCLASS(Blueprintable, meta = (BlueprintSpawnableComponent))
 class MEMORIA_API UMultiJumpPerkComponent : public UCharacterPerkComponent
 {
 	GENERATED_BODY()
@@ -20,7 +20,7 @@ public:
 
 	virtual void Teardown(ACharacterBase* character) override;
 
-	UPROPERTY(EditDefaultsOnly, Category = "CharacterPerk")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "CharacterPerk")
 	uint8 MaxJumpCount;
 
 private:
