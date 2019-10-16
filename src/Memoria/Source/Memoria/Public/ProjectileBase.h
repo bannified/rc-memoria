@@ -18,6 +18,7 @@ class UCharacterProjectileEffect;
 class UEnemyProjectileEffect;
 class ACharacterBase;
 class UHealthComponent;
+class UMemoriaDamageType;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnProjectileResolveDelegate, AProjectileBase*, projectile, const FHitResult&, Hit);
 
@@ -60,6 +61,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileBase|Gameplay")
 	bool CanFriendlyFire;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileBase|Gameplay")
+	TSubclassOf<UMemoriaDamageType> NormalDamageType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileBase|Gameplay")
+	TSubclassOf<UMemoriaDamageType> CriticalDamageType;
 
 protected:
 

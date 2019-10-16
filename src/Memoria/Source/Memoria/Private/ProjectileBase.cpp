@@ -17,6 +17,8 @@
 #include "AIModule/Classes/Perception/AISense_Damage.h"
 #include "AIModule/Classes/Perception/AISense_Hearing.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
+#include "MemoriaDamageType.h"
+#include "GameFramework/DamageType.h"
 
 // Sets default values
 AProjectileBase::AProjectileBase()
@@ -160,19 +162,21 @@ void AProjectileBase::AddIgnoredActor(AActor* actor)
 void AProjectileBase::ResolveAllEffects(UHealthComponent* healthComp, ACharacterBase* characterBase, ACharacterBase* enemy, const FHitResult& Hit)
 {
 	float finalDamage = DamageDealt;
+	TSubclassOf<UMemoriaDamageType> finalDamageType = NormalDamageType;
 	EPhysicalSurface surfaceType = SurfaceType_Default;
 	surfaceType = UPhysicalMaterial::DetermineSurfaceType(Hit.PhysMaterial.Get());
 
 	if (surfaceType == SURFACE_CRITICAL) {
 		DamageDealt *= CriticalMultiplier.GetValue();
+		finalDamageType = CriticalDamageType;
 	}
 
 	if (AoeRadius > 0.0f) {
-		UGameplayStatics::ApplyRadialDamage(GetWorld(), DamageDealt, Hit.ImpactPoint, AoeRadius, nullptr, TArray<AActor*>(), OwningActor, OwningController, true, COLLISION_PROJECTILEAOEBLOCK);
+		UGameplayStatics::ApplyRadialDamage(GetWorld(), DamageDealt, Hit.ImpactPoint, AoeRadius, finalDamageType, TArray<AActor*>(), OwningActor, OwningController, true, COLLISION_PROJECTILEAOEBLOCK);
 		UAISense_Hearing::ReportNoiseEvent(GetWorld(), Hit.ImpactPoint, 1.0F, OwningActor, AoeRadius);
 	}
 	else {
-		UGameplayStatics::ApplyDamage(Hit.GetActor(), DamageDealt, OwningController, OwningActor, nullptr);
+		UGameplayStatics::ApplyDamage(Hit.GetActor(), DamageDealt, OwningController, OwningActor, finalDamageType);
 		UAISense_Hearing::ReportNoiseEvent(GetWorld(), Hit.ImpactPoint, 1.f, OwningActor);
 	}
 
