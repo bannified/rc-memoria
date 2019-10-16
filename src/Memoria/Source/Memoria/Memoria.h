@@ -12,6 +12,9 @@
 #define COLLISION_UNIT					ECC_GameTraceChannel3
 #define COLLISION_PROJECTILEAOEBLOCK	ECC_GameTraceChannel4
 
+/// Physical Surfaces
+#define SURFACE_CRITICAL				SurfaceType1
+
 // Legacy
 #define COLLISION_BASE					ECC_GameTraceChannel2
 #define COLLISION_WATER					ECC_GameTraceChannel3

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "ModifiableAttribute.h"
 #include "MemoriaTypes.h"
 #include "ProjectileBase.generated.h"
 
@@ -46,6 +47,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileBase|Gameplay")
 	float DamageDealt;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileBase|Gameplay")
+	FModifiableAttribute CriticalMultiplier;
 
 	// maybe move to another projectile
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileBase|Gameplay")
