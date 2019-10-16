@@ -15,6 +15,7 @@ class MEMORIA_API UMemoriaDamageType : public UDamageType
 	GENERATED_BODY()
 
 public:
-	UUserWidget DamageDisplayWidget;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MemoriaDamageType")
+	TSubclassOf<AActor> DamageDisplayWidgetClass;
 	
 };
