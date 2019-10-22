@@ -68,11 +68,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileBase|Gameplay")
 	TSubclassOf<UMemoriaDamageType> CriticalDamageType;
 
-protected:
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	UProjectileMovementComponent* ProjectileMovement;
 
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ProjectileBase|Components")
 	UStaticMeshComponent* MeshComp;
 
