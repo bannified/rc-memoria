@@ -36,6 +36,7 @@ void AChargeUpProjectileAttack::AttackStart()
 
 void AChargeUpProjectileAttack::AttackEnd()
 {
+
 	ChargeRelease();
 
 	ReceiveAttackEnd();
@@ -95,6 +96,10 @@ void AChargeUpProjectileAttack::ChargeRelease()
 
 void AChargeUpProjectileAttack::Fire()
 {
+	if (ownerCharacter == nullptr) {
+		return;
+	}
+
 	if (ownerCharacter->ManaComponent->CurrentMana < ManaCost.GetValue()) {
 		return;
 	}

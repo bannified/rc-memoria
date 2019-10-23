@@ -27,6 +27,10 @@ void AProjectileAttack::AttackStart()
 {
 	Super::AttackStart();
 
+	if (ownerCharacter == nullptr) {
+		return;
+	}
+
 	float firstDelay = FMath::Max(LastFireTime + Cooldown.GetValue() - GetWorld()->TimeSeconds, 0.00f);
 
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AProjectileAttack::Fire, Cooldown.GetValue(), true, firstDelay);
@@ -39,12 +43,20 @@ void AProjectileAttack::AttackEnd()
 {
 	Super::AttackEnd();
 
+	if (ownerCharacter == nullptr) {
+		return;
+	}
+
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 	ownerCharacter->bUseControllerRotationYaw = true;
 }
 
 void AProjectileAttack::Fire()
 {
+	if (ownerCharacter == nullptr) {
+		return;
+	}
+
 	if (ownerCharacter->ManaComponent->CurrentMana < ManaCost.GetValue()) {
 		return;
 	}
@@ -124,6 +136,10 @@ void AProjectileAttack::Fire()
 
 void AProjectileAttack::ComplementaryFire()
 {
+	if (ownerCharacter == nullptr) {
+		return;
+	}
+
 	FVector cameraLocation;
 	FRotator cameraRotation;
 

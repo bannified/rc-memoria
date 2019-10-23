@@ -6,6 +6,10 @@
 
 void ABurstFireProjectileAttack::AttackStart()
 {
+	if (ownerCharacter == nullptr) {
+		return;
+	}
+
 	ReceiveAttackStart();
 
 	float firstDelay = FMath::Max(LastFireTime + Cooldown.GetValue() - GetWorld()->TimeSeconds, 0.00f);
