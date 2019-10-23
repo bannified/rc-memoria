@@ -445,6 +445,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visuals")
 	FName NozzleEndSocketName;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "CharacterAttack|ProjectileAttack")
+	FName ReloadSocketName;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "CharacterBase|Audio")
+	USoundBase* ReloadingSound;
 
 public:	
 	// Called every frame

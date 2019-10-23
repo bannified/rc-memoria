@@ -212,9 +212,9 @@ void AProjectileAttack::ComplementaryFire()
 void AProjectileAttack::PlayFireEffects()
 {
 	FVector muzzleLocation;
-	USceneComponent* attachComponent = nullptr;
+	USceneComponent* attachComponent = ownerCharacter->GetWeaponMeshComponent();
 
-	if (ownerCharacter->GetWeaponMeshComponent() == nullptr) {
+	if (attachComponent == nullptr) {
 		muzzleLocation = ownerCharacter->GetActorLocation();
 	}
 	else {
@@ -223,7 +223,7 @@ void AProjectileAttack::PlayFireEffects()
 	}
 
 	if (ProjectileFireSound != nullptr) {
-		UGameplayStatics::PlaySoundAtLocation(GetWorld(), ProjectileFireSound, muzzleLocation);
+		UGameplayStatics::SpawnSoundAttached(ProjectileFireSound, attachComponent, MuzzleSocketName, FVector::ZeroVector, EAttachLocation::SnapToTargetIncludingScale, true);
 	}
 	
 	if (MuzzleFlash != nullptr) {
