@@ -245,7 +245,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CharacterBase|Animation")
 	FORCEINLINE UAnimMontage* GetAnimWithName(const FName name)
 	{
-		return *(NameToAnimMap.Find(name));
+		UAnimMontage** montage = NameToAnimMap.Find(name);
+		if (montage == nullptr) return nullptr;
+		return *(montage);
 	}
 
 	UFUNCTION(BlueprintCallable, Category = "CharacterBase|Perks")

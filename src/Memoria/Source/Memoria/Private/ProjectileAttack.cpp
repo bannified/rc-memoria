@@ -8,6 +8,8 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "CharacterBase.h"
 #include "ManaComponent.h"
+#include "Animation/AnimationAsset.h"
+#include "Animation/AnimMontage.h"
 #include "Memoria.h"
 
 AProjectileAttack::AProjectileAttack()
@@ -126,6 +128,11 @@ void AProjectileAttack::Fire()
 		projectile->AddIgnoredActor(actor);
 	}
 	// set projectile damage.
+
+	UAnimMontage* montage = ownerCharacter->GetAnimWithName(AnimName);
+	if (montage != nullptr) {
+		ownerCharacter->PlayAnimMontage(montage);
+	}
 
 	PlayFireEffects();
 

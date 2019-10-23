@@ -40,6 +40,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterAttack|ProjectileAttack")
 	FVector MuzzleFlashScale = FVector(1, 1, 1);
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "CharacterAttack|ProjectileAttack")
+	FName AnimName;
+
 	virtual void SetupWithCharacter(ACharacterBase* character) override;
 
 	virtual void AttackStart() override;
