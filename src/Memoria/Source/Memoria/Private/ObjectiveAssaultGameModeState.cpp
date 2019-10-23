@@ -36,7 +36,7 @@ void AObjectiveAssaultGameModeState::OnStateTick(AGameControllerBase* GameMode, 
 	if (RunningTime >= Lifetime) {
 		// Transition to PerpetualGameModeState
 		ASuppressionEliminationGMS* perpState = GetWorld()->SpawnActor<ASuppressionEliminationGMS>(SuppressionEliminationGMSClass, FVector::ZeroVector, FRotator::ZeroRotator);
-		
+		perpState->GameModeBase = GameMode;
 		perpState->Init();
 
 		GameModeBase->MoveToState(perpState);

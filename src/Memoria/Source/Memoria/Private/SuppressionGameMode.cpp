@@ -20,7 +20,6 @@ void ASuppressionGameMode::StartGame()
 	FGenericTeamId::SetAttitudeSolver(&UMemoriaDeveloperSettings::GetAttitude);
 
 	TArray<AActor*> resultArr;
-	
 
 	// Get points where objectives can be
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AObjectivePoint::StaticClass(), resultArr);
@@ -29,11 +28,11 @@ void ASuppressionGameMode::StartGame()
 		ObjectivePoints.Add(Cast<AObjectivePoint>(actor));
 	}
 
+	TArray<AActor*> resultArr2;
 	// Get existing objectives
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABase::StaticClass(), resultArr);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABase::StaticClass(), resultArr2);
 
-	Objectives.Reserve(resultArr.Num());
-	for (AActor* actor : resultArr) {
+	for (AActor* actor : resultArr2) {
 		Objectives.Add(Cast<ABase>(actor));
 	}
 
@@ -42,7 +41,8 @@ void ASuppressionGameMode::StartGame()
 	TArray<bool> spawned = TArray<bool>();
 	spawned.SetNum(ObjectivePoints.Num());
 
-	for (int i = Objectives.Num(); i < NumStartingObjectives; i++) {
+	int i = Objectives.Num();
+	for (; i < NumStartingObjectives; i++) {
 		if (i >= ObjectivePoints.Num()) {
 			break;
 		}
@@ -64,6 +64,7 @@ void ASuppressionGameMode::StartGame()
 
 		FActorSpawnParameters params;
 		params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+		params.Owner = this;
 
 		ABase* nObjective = GetWorld()->SpawnActor<ABase>(ObjectiveClass, finalPos, FRotator::ZeroRotator, params);
 		Objectives.Add(nObjective);
