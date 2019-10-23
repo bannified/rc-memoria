@@ -79,7 +79,7 @@ public:
 	UFUNCTION(NetMulticast, Reliable, WithValidation, BlueprintCallable, Category = "Equipment")
 	void EquipWeapon(TSubclassOf<AWeaponBase> Weapon);
 
-	
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase|Equipment")
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMeshComponent() { return 
 		(EquippedWeapon != nullptr) ? EquippedWeapon->WeaponMeshComponent : GetMesh(); 
 	}

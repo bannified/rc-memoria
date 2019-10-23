@@ -175,6 +175,8 @@ void AChargeUpProjectileAttack::Fire()
 	projectile->DamageDealt = FMath::Lerp(MinChargeDamage.GetValue(), MaxChargeDamage.GetValue(), prop);
 	projectile->ProjectileMovement->InitialSpeed = FMath::Lerp(MinChargeDamage.GetValue(), MaxChargeDamage.GetValue(), prop);
 
+	PlayFireEffects();
+
 	//PlayPrimaryFireEffects();
 
 	LastFireTime = GetWorld()->TimeSeconds;
