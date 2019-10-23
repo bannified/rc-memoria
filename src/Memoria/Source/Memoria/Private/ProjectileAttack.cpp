@@ -127,7 +127,7 @@ void AProjectileAttack::Fire()
 	}
 	// set projectile damage.
 
-	//PlayPrimaryFireEffects();
+	PlayFireEffects();
 
 	LastFireTime = GetWorld()->TimeSeconds;
 
@@ -202,9 +202,31 @@ void AProjectileAttack::ComplementaryFire()
 	}
 	// set projectile damage.
 
-	//PlayPrimaryFireEffects();
+	PlayFireEffects();
 
 	LastFireTime = GetWorld()->TimeSeconds;
 
 	OnComplementaryFire.Broadcast(ownerCharacter, this);
+}
+
+void AProjectileAttack::PlayFireEffects()
+{
+	FVector muzzleLocation;
+	USceneComponent* attachComponent = nullptr;
+
+	if (ownerCharacter->GetWeaponMeshComponent() == nullptr) {
+		muzzleLocation = ownerCharacter->GetActorLocation();
+	}
+	else {
+		attachComponent = ownerCharacter->GetWeaponMeshComponent();
+		muzzleLocation = attachComponent->GetSocketLocation(MuzzleSocketName);
+	}
+
+	if (ProjectileFireSound != nullptr) {
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), ProjectileFireSound, muzzleLocation);
+	}
+	
+	if (MuzzleFlash != nullptr) {
+		UGameplayStatics::SpawnEmitterAttached(MuzzleFlash, attachComponent, MuzzleSocketName, MuzzleFlashScale, FRotator::ZeroRotator, EAttachLocation::SnapToTarget, true, EPSCPoolMethod::AutoRelease);
+	}
 }
