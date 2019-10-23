@@ -68,6 +68,7 @@ void ASuppressionGameMode::StartGame()
 
 		ABase* nObjective = GetWorld()->SpawnActor<ABase>(ObjectiveClass, finalPos, FRotator::ZeroRotator, params);
 		Objectives.Add(nObjective);
+		nObjective->HealthComponent->DeathEvent.AddDynamic(this, &ASuppressionGameMode::CheckWinCondition);
 	}
 
 	AGameModeState* nextState = GetWorld()->SpawnActor<AGameModeState>(SuppressionEliminationGMSClass, FVector::ZeroVector, FRotator::ZeroRotator);
@@ -102,6 +103,22 @@ int ASuppressionGameMode::GetCurrentCheckpointIndex()
 	index = FMath::Clamp(index + 1, 0, Checkpoints.Num() - 1);
 
 	return index;
+}
+
+void ASuppressionGameMode::CheckWinCondition()
+{
+	if (Objectives.Num() == 0) {
+		WinGame();
+		return;
+	}
+
+	for (ABase* base : Objectives) {
+		if (base->HealthComponent->currentHealth > 0) {
+			return;
+		}
+	}
+
+	WinGame();
 }
 
 void ASuppressionGameMode::BeginPlay()

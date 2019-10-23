@@ -40,6 +40,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SuppressionGameMode")
 	TArray<AObjectivePoint*> ObjectivePoints;
 
+	UFUNCTION(BlueprintCallable, Category = "SuppressionGameMode")
+	void CheckWinCondition();
+
 protected:
     // Called when the game starts or when spawned
     virtual void BeginPlay() override;

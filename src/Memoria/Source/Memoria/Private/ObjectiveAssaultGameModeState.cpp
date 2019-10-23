@@ -60,6 +60,8 @@ void AObjectiveAssaultGameModeState::OnStateExit(AGameControllerBase* GameMode)
 	}
 
 	ReceiveOnStateExit(GameMode);
+
+	Destroy();
 }
 
 void AObjectiveAssaultGameModeState::Init()

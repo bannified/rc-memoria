@@ -116,6 +116,7 @@ void AGameControllerBase::WinGame()
 		//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, TEXT("Win Game!"));
 
 	if (!b_GameWon) {
+		MoveToState(nullptr);
 		OnGameWin.Broadcast();
 		b_GameWon = true;
 	}
