@@ -7,7 +7,7 @@
 #include "CharacterPerkComponent.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), Abstract )
+UCLASS( Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), Abstract )
 class MEMORIA_API UCharacterPerkComponent : public UActorComponent
 {
 	GENERATED_BODY()

@@ -10,12 +10,12 @@
 #include "ManaComponent.h"
 #include "Memoria.h"
 
-UProjectileAttack::UProjectileAttack()
+AProjectileAttack::AProjectileAttack()
 {
 	MuzzleSocketName = FName("muzzle");
 }
 
-void UProjectileAttack::SetupWithCharacter(ACharacterBase* ownerCharacter)
+void AProjectileAttack::SetupWithCharacter(ACharacterBase* ownerCharacter)
 {
 	Super::SetupWithCharacter(ownerCharacter);
 	LastFireTime = -Cooldown.GetValue();
@@ -23,27 +23,27 @@ void UProjectileAttack::SetupWithCharacter(ACharacterBase* ownerCharacter)
 	ReceiveCharacterSetup(ownerCharacter);
 }
 
-void UProjectileAttack::AttackStart()
+void AProjectileAttack::AttackStart()
 {
 	Super::AttackStart();
 
 	float firstDelay = FMath::Max(LastFireTime + Cooldown.GetValue() - GetWorld()->TimeSeconds, 0.00f);
 
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UProjectileAttack::Fire, Cooldown.GetValue(), true, firstDelay);
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AProjectileAttack::Fire, Cooldown.GetValue(), true, firstDelay);
 	ownerCharacter->ManaComponent->InterruptReload();
 
 	ownerCharacter->bUseControllerRotationYaw = true;
 }
 
-void UProjectileAttack::AttackEnd()
+void AProjectileAttack::AttackEnd()
 {
 	Super::AttackEnd();
 
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
-	ownerCharacter->bUseControllerRotationYaw = false;
+	ownerCharacter->bUseControllerRotationYaw = true;
 }
 
-void UProjectileAttack::Fire()
+void AProjectileAttack::Fire()
 {
 	if (ownerCharacter->ManaComponent->CurrentMana < ManaCost.GetValue()) {
 		return;
@@ -51,7 +51,7 @@ void UProjectileAttack::Fire()
 
 	ownerCharacter->ManaComponent->ModifyMana(-ManaCost.GetValue());
 
-	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &UCharacterAttack::OffCooldown, Cooldown.GetValue(), false);
+	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &ACharacterAttack::OffCooldown, Cooldown.GetValue(), false);
 
 	FVector cameraLocation;
 	FRotator cameraRotation;
@@ -122,7 +122,7 @@ void UProjectileAttack::Fire()
 	OnNormalFire.Broadcast(ownerCharacter, this);
 }
 
-void UProjectileAttack::ComplementaryFire()
+void AProjectileAttack::ComplementaryFire()
 {
 	FVector cameraLocation;
 	FRotator cameraRotation;

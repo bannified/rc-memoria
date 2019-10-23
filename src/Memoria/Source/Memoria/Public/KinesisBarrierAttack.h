@@ -16,7 +16,7 @@ class UHealthComponent;
  * 
  */
 UCLASS()
-class MEMORIA_API UKinesisBarrierAttack : public UCharacterAttack
+class MEMORIA_API AKinesisBarrierAttack : public ACharacterAttack
 {
 	GENERATED_BODY()
 	

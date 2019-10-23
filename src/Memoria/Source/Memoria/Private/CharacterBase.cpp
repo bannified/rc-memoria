@@ -18,6 +18,7 @@
 #include "CharacterAttack.h"
 #include "Memoria.h"
 #include "GameTeam.h"
+#include "MultiJumpPerkComponent.h"
 #include "ManaComponent.h"
 
 // Sets default values
@@ -220,8 +221,8 @@ void ACharacterBase::BeginPlay()
 
 	Attacks.Reserve(AttacksClasses.Num());
 	// Setup Action Components
-	for (TSubclassOf<UCharacterAttack> attackClass : AttacksClasses) {
-		UCharacterAttack* instance = NewObject<UCharacterAttack>(this, attackClass);
+	for (TSubclassOf<ACharacterAttack> attackClass : AttacksClasses) {
+		ACharacterAttack* instance = GetWorld()->SpawnActor<ACharacterAttack>(attackClass, FVector::ZeroVector, FRotator::ZeroRotator);
 		instance->AttackIndex = Attacks.Add(instance);
 		instance->SetupWithCharacter(this);
 	}
@@ -231,6 +232,15 @@ void ACharacterBase::BeginPlay()
 	}
 
 	OnBeginPlayComplete();
+}
+
+UCharacterPerkComponent* ACharacterBase::AddPerk(TSubclassOf<UCharacterPerkComponent> perkClass)
+{
+	UCharacterPerkComponent* perk = NewObject<UCharacterPerkComponent>(this, perkClass);
+	perk->RegisterComponent();
+	//perk->Setup(this);
+
+	return perk;
 }
 
 void ACharacterBase::MoveForward(float value)

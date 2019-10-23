@@ -7,28 +7,28 @@ void AGameModeState::Init()
 
 }
 
-void AGameModeState::OnStateEnter(AMemGameModeBase* GameMode)
+void AGameModeState::OnStateEnter(AGameControllerBase* GameMode)
 {
     this->GameModeBase = GameMode;
 	ReceiveOnStateEnter(GameMode);
 }
 
-void AGameModeState::OnStateStart(AMemGameModeBase* GameMode)
+void AGameModeState::OnStateStart(AGameControllerBase* GameMode)
 {
 	ReceiveOnStateStart(GameMode);
 }
 
-void AGameModeState::OnStateTick(AMemGameModeBase* GameMode, float DeltaTime)
+void AGameModeState::OnStateTick(AGameControllerBase* GameMode, float DeltaTime)
 {
     ReceiveOnStateTick(GameMode, DeltaTime);
 }
 
-void AGameModeState::OnStateStop(AMemGameModeBase* GameMode)
+void AGameModeState::OnStateStop(AGameControllerBase* GameMode)
 {
     ReceiveOnStateStop(GameMode);
 }
 
-void AGameModeState::OnStateExit(AMemGameModeBase* GameMode)
+void AGameModeState::OnStateExit(AGameControllerBase* GameMode)
 {
     ReceiveOnStateExit(GameMode);
 }

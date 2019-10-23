@@ -2,3 +2,8 @@
 
 #include "LevelDataAsset.h"
 
+void ULevelDataAsset::Setup(AGameControllerBase* controller)
+{
+
+	OnReceiveSetup(controller);
+}

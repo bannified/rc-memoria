@@ -8,12 +8,12 @@
 #include "RamboPerkComponent.generated.h"
 
 class ACharacterBase;
-class UCharacterAttack;
+class ACharacterAttack;
 
 /**
  * 
  */
-UCLASS(meta = (BlueprintSpawnableComponent))
+UCLASS(Blueprintable, meta = (BlueprintSpawnableComponent))
 class MEMORIA_API URamboPerkComponent : public UCharacterPerkComponent
 {
 	GENERATED_BODY()
@@ -28,12 +28,12 @@ public:
 
 protected:
 	UFUNCTION()
-	void RepeatedFire(ACharacterBase* character, UCharacterAttack* attack);
+	void RepeatedFire(ACharacterBase* character, ACharacterAttack* attack);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PerkComponent|Rambo")
 	FAttributeModifier BulletSpreadModifier;
 
 private:
-	UCharacterAttack* modifiedAttack;
+	ACharacterAttack* modifiedAttack;
 
 };

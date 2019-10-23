@@ -48,7 +48,7 @@ void ABase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	HealthComponent->InitHealth(StartingHealth);
+	HealthComponent->Init();
 }
 
 // Called every frame

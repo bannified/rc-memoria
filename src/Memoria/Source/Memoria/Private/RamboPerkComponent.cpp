@@ -12,11 +12,11 @@ URamboPerkComponent::URamboPerkComponent()
 
 void URamboPerkComponent::Setup(ACharacterBase* character)
 {
-	UCharacterAttack* primary = character->GetPrimaryAttack();
+	ACharacterAttack* primary = character->GetPrimaryAttack();
 
 	if (primary != nullptr) {
 		modifiedAttack = primary;
-		UProjectileAttack* projectileAttack = Cast<UProjectileAttack>(primary);
+		AProjectileAttack* projectileAttack = Cast<AProjectileAttack>(primary);
 		if (projectileAttack) {
 			projectileAttack->BulletSpreadAngle.AddModifier(BulletSpreadModifier);
 			projectileAttack->OnNormalFire.AddDynamic(this, &URamboPerkComponent::RepeatedFire);
@@ -29,7 +29,7 @@ void URamboPerkComponent::Setup(ACharacterBase* character)
 void URamboPerkComponent::Teardown(ACharacterBase* character)
 {
 	if (modifiedAttack != nullptr) {
-		UProjectileAttack* projectileAttack = Cast<UProjectileAttack>(modifiedAttack);
+		AProjectileAttack* projectileAttack = Cast<AProjectileAttack>(modifiedAttack);
 		if (projectileAttack) {
 			projectileAttack->BulletSpreadAngle.RemoveModifierSingle(BulletSpreadModifier);
 			projectileAttack->OnNormalFire.RemoveDynamic(this, &URamboPerkComponent::RepeatedFire);
@@ -39,9 +39,9 @@ void URamboPerkComponent::Teardown(ACharacterBase* character)
 	Super::Teardown(character);
 }
 
-void URamboPerkComponent::RepeatedFire(ACharacterBase* character, UCharacterAttack* attack)
+void URamboPerkComponent::RepeatedFire(ACharacterBase* character, ACharacterAttack* attack)
 {
-	UProjectileAttack* projectileAttack = Cast<UProjectileAttack>(attack);
+	AProjectileAttack* projectileAttack = Cast<AProjectileAttack>(attack);
 	if (projectileAttack) {
 		projectileAttack->ComplementaryFire();
 	}
