@@ -8,6 +8,7 @@
 #include "MemoriaDeveloperSettings.h"
 #include "SuppressionEliminationGMS.h"
 #include "GameModeState.h"
+#include "ObjectivePoint.h"
 
 ASuppressionGameMode::ASuppressionGameMode()
 {
@@ -19,10 +20,53 @@ void ASuppressionGameMode::StartGame()
 	FGenericTeamId::SetAttitudeSolver(&UMemoriaDeveloperSettings::GetAttitude);
 
 	TArray<AActor*> resultArr;
+	
+
+	// Get points where objectives can be
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AObjectivePoint::StaticClass(), resultArr);
+	ObjectivePoints.Reserve(resultArr.Num());
+	for (AActor* actor : resultArr) {
+		ObjectivePoints.Add(Cast<AObjectivePoint>(actor));
+	}
+
+	// Get existing objectives
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABase::StaticClass(), resultArr);
 
+	Objectives.Reserve(resultArr.Num());
 	for (AActor* actor : resultArr) {
 		Objectives.Add(Cast<ABase>(actor));
+	}
+
+
+	// Spawn objectives until NumStartingObjectives
+	TArray<bool> spawned = TArray<bool>();
+	spawned.SetNum(ObjectivePoints.Num());
+
+	for (int i = Objectives.Num(); i < NumStartingObjectives; i++) {
+		if (i >= ObjectivePoints.Num()) {
+			break;
+		}
+
+		FVector finalPos = FVector::ZeroVector;
+		if (ObjectivePoints.Num() > 0) {
+			int selectedIndex = FMath::RandRange(0, ObjectivePoints.Num() - 1);
+			while (spawned[selectedIndex] == true) {
+				spawned[selectedIndex] = FMath::RandRange(0, ObjectivePoints.Num() - 1);
+			}
+
+			AObjectivePoint* point = ObjectivePoints[selectedIndex];
+
+			if (point != nullptr) {
+				finalPos = point->GetActorLocation();
+				spawned[selectedIndex] = true;
+			}
+		}
+
+		FActorSpawnParameters params;
+		params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+		ABase* nObjective = GetWorld()->SpawnActor<ABase>(ObjectiveClass, finalPos, FRotator::ZeroRotator, params);
+		Objectives.Add(nObjective);
 	}
 
 	AGameModeState* nextState = GetWorld()->SpawnActor<AGameModeState>(SuppressionEliminationGMSClass, FVector::ZeroVector, FRotator::ZeroRotator);
