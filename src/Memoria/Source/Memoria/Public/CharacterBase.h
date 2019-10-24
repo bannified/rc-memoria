@@ -79,7 +79,7 @@ public:
 	UFUNCTION(NetMulticast, Reliable, WithValidation, BlueprintCallable, Category = "Equipment")
 	void EquipWeapon(TSubclassOf<AWeaponBase> Weapon);
 
-	
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase|Equipment")
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMeshComponent() { return 
 		(EquippedWeapon != nullptr) ? EquippedWeapon->WeaponMeshComponent : GetMesh(); 
 	}
@@ -245,7 +245,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CharacterBase|Animation")
 	FORCEINLINE UAnimMontage* GetAnimWithName(const FName name)
 	{
-		return *(NameToAnimMap.Find(name));
+		UAnimMontage** montage = NameToAnimMap.Find(name);
+		if (montage == nullptr) return nullptr;
+		return *(montage);
 	}
 
 	UFUNCTION(BlueprintCallable, Category = "CharacterBase|Perks")
@@ -445,6 +447,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visuals")
 	FName NozzleEndSocketName;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "CharacterAttack|ProjectileAttack")
+	FName ReloadSocketName;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "CharacterBase|Audio")
+	USoundBase* ReloadingSound;
 
 public:	
 	// Called every frame

@@ -19,6 +19,7 @@
 #include "Memoria.h"
 #include "GameTeam.h"
 #include "MultiJumpPerkComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "ManaComponent.h"
 
 // Sets default values
@@ -65,6 +66,7 @@ ACharacterBase::ACharacterBase()
 
 	BoosterEndSocketName = "booster_end";
 	NozzleEndSocketName = "nozzle_end";
+	ReloadSocketName = "reload";
 
 	Boost_Force = 3000.0f;
 	Boost_Air_Force = 3000.0f;
@@ -396,6 +398,10 @@ void ACharacterBase::ReloadStart()
 {
 	ManaComponent->StartReload();
 
+	if (ReloadingSound != nullptr) {
+		USceneComponent* attachComponent = GetWeaponMeshComponent();
+		UGameplayStatics::SpawnSoundAttached(ReloadingSound, attachComponent, ReloadSocketName, FVector::ZeroVector, EAttachLocation::SnapToTargetIncludingScale, true);	
+	}
 	ReceiveReloadStart();
 }
 

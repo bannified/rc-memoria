@@ -8,6 +8,8 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "CharacterBase.h"
 #include "ManaComponent.h"
+#include "Animation/AnimationAsset.h"
+#include "Animation/AnimMontage.h"
 #include "Memoria.h"
 
 AProjectileAttack::AProjectileAttack()
@@ -27,6 +29,10 @@ void AProjectileAttack::AttackStart()
 {
 	Super::AttackStart();
 
+	if (ownerCharacter == nullptr) {
+		return;
+	}
+
 	float firstDelay = FMath::Max(LastFireTime + Cooldown.GetValue() - GetWorld()->TimeSeconds, 0.00f);
 
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AProjectileAttack::Fire, Cooldown.GetValue(), true, firstDelay);
@@ -39,12 +45,20 @@ void AProjectileAttack::AttackEnd()
 {
 	Super::AttackEnd();
 
+	if (ownerCharacter == nullptr) {
+		return;
+	}
+
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 	ownerCharacter->bUseControllerRotationYaw = true;
 }
 
 void AProjectileAttack::Fire()
 {
+	if (ownerCharacter == nullptr) {
+		return;
+	}
+
 	if (ownerCharacter->ManaComponent->CurrentMana < ManaCost.GetValue()) {
 		return;
 	}
@@ -115,7 +129,12 @@ void AProjectileAttack::Fire()
 	}
 	// set projectile damage.
 
-	//PlayPrimaryFireEffects();
+	UAnimMontage* montage = ownerCharacter->GetAnimWithName(AnimName);
+	if (montage != nullptr) {
+		ownerCharacter->PlayAnimMontage(montage);
+	}
+
+	PlayFireEffects();
 
 	LastFireTime = GetWorld()->TimeSeconds;
 
@@ -124,6 +143,10 @@ void AProjectileAttack::Fire()
 
 void AProjectileAttack::ComplementaryFire()
 {
+	if (ownerCharacter == nullptr) {
+		return;
+	}
+
 	FVector cameraLocation;
 	FRotator cameraRotation;
 
@@ -186,9 +209,31 @@ void AProjectileAttack::ComplementaryFire()
 	}
 	// set projectile damage.
 
-	//PlayPrimaryFireEffects();
+	PlayFireEffects();
 
 	LastFireTime = GetWorld()->TimeSeconds;
 
 	OnComplementaryFire.Broadcast(ownerCharacter, this);
+}
+
+void AProjectileAttack::PlayFireEffects()
+{
+	FVector muzzleLocation;
+	USceneComponent* attachComponent = ownerCharacter->GetWeaponMeshComponent();
+
+	if (attachComponent == nullptr) {
+		muzzleLocation = ownerCharacter->GetActorLocation();
+	}
+	else {
+		attachComponent = ownerCharacter->GetWeaponMeshComponent();
+		muzzleLocation = attachComponent->GetSocketLocation(MuzzleSocketName);
+	}
+
+	if (ProjectileFireSound != nullptr) {
+		UGameplayStatics::SpawnSoundAttached(ProjectileFireSound, attachComponent, MuzzleSocketName, FVector::ZeroVector, EAttachLocation::SnapToTargetIncludingScale, true);
+	}
+	
+	if (MuzzleFlash != nullptr) {
+		UGameplayStatics::SpawnEmitterAttached(MuzzleFlash, attachComponent, MuzzleSocketName, MuzzleFlashScale, FRotator::ZeroRotator, EAttachLocation::SnapToTarget, true, EPSCPoolMethod::AutoRelease);
+	}
 }

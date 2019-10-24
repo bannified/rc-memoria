@@ -52,8 +52,8 @@ void UHealthComponent::HandleTakeAnyDamage(AActor* DamagedActor, float Damage, c
 
 	float shieldsBefore = CurrentShields;
 
-	CurrentShields = FMath::Clamp(CurrentShields - Damage, 0.0f, maxHealth);
-	float shieldsDamageTaken = CurrentShields - shieldsBefore;
+	CurrentShields = FMath::Clamp(CurrentShields - Damage, 0.0f, MaxShields);
+	float shieldsDamageTaken = shieldsBefore - CurrentShields;
 	float leftover = Damage - shieldsDamageTaken;
 
 	float healthBefore = currentHealth;
