@@ -36,6 +36,10 @@ void AKinesisBarrierAttack::SetupWithCharacter(ACharacterBase* ownerCharacter)
 
 void AKinesisBarrierAttack::TeardownWithCharacter(ACharacterBase* ownerCharacter)
 {
+	if (ownerCharacter == nullptr) {
+		return;
+	}
+
 	if (BarrierInstance != nullptr) {
 		ownerCharacter->ActorsToIgnoreWhileAttacking.RemoveSingle(BarrierInstance);
 		BarrierInstance->Destroy();
@@ -44,6 +48,10 @@ void AKinesisBarrierAttack::TeardownWithCharacter(ACharacterBase* ownerCharacter
 
 void AKinesisBarrierAttack::AttackStart()
 {
+	if (ownerCharacter == nullptr) {
+		return;
+	}
+
 	if (ManaCost.GetValue() > ownerCharacter->ManaComponent->CurrentMana) {
 		return;
 	}
@@ -72,6 +80,10 @@ void AKinesisBarrierAttack::AttackStart()
 
 void AKinesisBarrierAttack::AttackEnd()
 {
+	if (ownerCharacter == nullptr) {
+		return;
+	}
+
 	if (!HasAttackStarted) {
 		return;
 	}

@@ -39,6 +39,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MemGameModeBase|Level")
 	TArray< FSpawnPointArray > SpawnPointsGroups;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SuppressionGameMode")
+	TSubclassOf<ABase> ObjectiveClass;
+
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MemGameModeBase|Level")
     TArray<ABase*> Objectives;
 

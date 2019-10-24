@@ -58,6 +58,8 @@ void AMemGameModeBase::StartGame(ULevelDataAsset* LevelData)
 {
 	FGenericTeamId::SetAttitudeSolver(&UMemoriaDeveloperSettings::GetAttitude);
 
+	b_GameWon = false;
+
 	if (LevelData == nullptr) {
 		PRINT_INFO("MemGameModeBase %s does not have a LevelData.", *(this->GetName()));
 		return;
