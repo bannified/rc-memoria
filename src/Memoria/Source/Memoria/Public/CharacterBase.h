@@ -29,6 +29,7 @@ class UWorld;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCharacterBaseGameplayEvent, ACharacterBase*, Character);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCharacterBaseGameplayEvent_OneInt, ACharacterBase*, Character, int, value);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnDamageDealt, FVector, ImpactPoint, const class UDamageType*, DamageType, AActor*, DamageCauser, AActor*, Victim);
 
 UCLASS()
 class MEMORIA_API ACharacterBase : public ACharacter, public IGenericTeamAgentInterface
@@ -130,6 +131,9 @@ public:
 	FCharacterBaseGameplayEvent_OneInt OnJumpStart;
 	UPROPERTY(BlueprintAssignable, Category = "CharacterBase Events")
 	FCharacterBaseGameplayEvent_OneInt OnJumpEnd;
+
+	UPROPERTY(BlueprintCallable, BlueprintAssignable, Category = "CharacterBase Events")
+	FOnDamageDealt OnDealDamage;
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "CharacterBase Events")
 	FCharacterBaseGameplayEvent OnAttackTrigger_AnimNotify;
