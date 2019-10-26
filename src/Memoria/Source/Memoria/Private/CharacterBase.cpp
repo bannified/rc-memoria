@@ -475,6 +475,24 @@ void ACharacterBase::Contextual()
 	ReceiveContextual();
 }
 
+void ACharacterBase::ReInitializeAttacks(TArray<TSubclassOf<ACharacterAttack>> attackClasses)
+{
+	for (int i = Attacks.Num() - 1; i >= 0; i--) {
+		Attacks[i]->TeardownWithCharacter(this);
+		Attacks.RemoveAt(i);
+	}
+
+	AttacksClasses = attackClasses;
+
+	Attacks.Reserve(AttacksClasses.Num());
+	// Setup Action Components
+	for (TSubclassOf<ACharacterAttack> attackClass : AttacksClasses) {
+		ACharacterAttack* instance = GetWorld()->SpawnActor<ACharacterAttack>(attackClass, FVector::ZeroVector, FRotator::ZeroRotator);
+		instance->AttackIndex = Attacks.Add(instance);
+		instance->SetupWithCharacter(this);
+	}
+}
+
 void ACharacterBase::PlayBoostEffects_Implementation()
 {
 

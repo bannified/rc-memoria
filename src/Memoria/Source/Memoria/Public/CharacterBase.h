@@ -451,6 +451,9 @@ protected:
 	FName ReloadSocketName;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "CharacterBase|Audio")
 	USoundBase* ReloadingSound;
+	
+	UFUNCTION(BlueprintCallable, Category = "CharacterAttack|Attacks")
+	void ReInitializeAttacks(TArray<TSubclassOf<ACharacterAttack>> attackClasses);
 
 public:	
 	// Called every frame
