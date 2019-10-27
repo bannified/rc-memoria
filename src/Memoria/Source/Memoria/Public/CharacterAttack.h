@@ -98,5 +98,11 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "CharacterAttack")
 	virtual float GetCooldown();
+	
+	UFUNCTION(BlueprintCallable, Category = "CharacterAttack")
+	virtual float GetDisplayedCooldown();
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterAttack")
+	virtual FTimerHandle GetDisplayedCooldownTimerHandle();
 
 };

@@ -39,4 +39,7 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "ProjectileAttack|BurstFire")
 	float GetBurstInterval();
 
+	//virtual FTimerHandle GetDisplayedCooldownTimerHandle() override;
+
+	float LastBurstTime = 0.0f;
 };

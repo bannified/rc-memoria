@@ -11,11 +11,15 @@ void ABurstFireProjectileAttack::AttackStart()
 		return;
 	}
 
+	if (!b_OffCooldown) {
+		return;
+	}
+
 	ReceiveAttackStart();
 
 	float firstDelay = FMath::Max(LastFireTime + GetCooldown() - GetWorld()->TimeSeconds, 0.00f);
 
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ABurstFireProjectileAttack::BurstFire, GetCooldown(), true, firstDelay);
+	BurstFire();
 	//ownerCharacter->ManaComponent->InterruptReload();
 }
 
@@ -30,15 +34,18 @@ void ABurstFireProjectileAttack::Fire()
 
 	Super::Fire();
 
+	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &ABurstFireProjectileAttack::OffCooldown, 9999.9f, false);
+
 	if (InterBurstCount >= BurstCount.GetValue()) {
 		GetWorld()->GetTimerManager().ClearTimer(BurstTimerHandle);
-		GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+		GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &ABurstFireProjectileAttack::OffCooldown, GetCooldown(), false);
 		InterBurstCount = 0;
 	}
 }
 
 void ABurstFireProjectileAttack::BurstFire()
 {
+	b_OffCooldown = false;
 	Fire();
 	GetWorld()->GetTimerManager().SetTimer(BurstTimerHandle, this, &ABurstFireProjectileAttack::Fire, GetBurstInterval(), true);
 }

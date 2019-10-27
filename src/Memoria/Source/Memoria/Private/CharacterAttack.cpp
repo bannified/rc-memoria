@@ -70,3 +70,13 @@ float ACharacterAttack::GetCooldown()
 
 	return FMath::Max(0.0f, Cooldown.GetValue() * (1.0f - ownerCharacter->StatCooldownReduction.GetValue())); // percentage based cooldown reduction
 }
+
+float ACharacterAttack::GetDisplayedCooldown()
+{
+	return GetCooldown();
+}
+
+FTimerHandle ACharacterAttack::GetDisplayedCooldownTimerHandle()
+{
+	return CooldownTimerHandle;
+}

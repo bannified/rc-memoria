@@ -69,7 +69,7 @@ void AProjectileAttack::Fire()
 
 	ownerCharacter->ManaComponent->ModifyMana(-ManaCost.GetValue());
 
-	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &ACharacterAttack::OffCooldown, Cooldown.GetValue(), false);
+	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &ACharacterAttack::OffCooldown, GetCooldown(), false);
 
 	FVector cameraLocation;
 	FRotator cameraRotation;
