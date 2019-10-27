@@ -66,7 +66,6 @@ void AProjectileAttack::Fire()
 		OnInsufficientMana.Broadcast(ownerCharacter, this);
 		return;
 	}
-	
 
 	ownerCharacter->ManaComponent->ModifyMana(-ManaCost.GetValue());
 
@@ -133,6 +132,7 @@ void AProjectileAttack::Fire()
 		projectile->AddIgnoredActor(actor);
 	}
 	// set projectile damage.
+	projectile->DamageDealt = ownerCharacter->StatDamageMultiplier.GetValue() * (ownerCharacter->StatBaseDamage.GetValue() + projectile->DamageDealt);
 
 	UAnimMontage* montage = ownerCharacter->GetAnimWithName(AnimName);
 	if (montage != nullptr) {
@@ -241,4 +241,13 @@ void AProjectileAttack::PlayFireEffects()
 	if (MuzzleFlash != nullptr) {
 		UGameplayStatics::SpawnEmitterAttached(MuzzleFlash, attachComponent, MuzzleSocketName, MuzzleFlashScale, FRotator::ZeroRotator, EAttachLocation::SnapToTarget, true, EPSCPoolMethod::AutoRelease);
 	}
+}
+
+float AProjectileAttack::GetCooldown()
+{
+	if (ownerCharacter == nullptr) {
+		return Cooldown.GetValue();
+	}
+
+	return FMath::Max(0.0f, Cooldown.GetValue() * (1.0f / ownerCharacter->StatBaseAttackSpeed.GetValue())); // percentage based cooldown reduction
 }

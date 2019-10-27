@@ -151,6 +151,18 @@ public:
 
     /* Gameplay Properties */
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
+	FModifiableAttribute StatCooldownReduction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
+	FModifiableAttribute StatBaseDamage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
+	FModifiableAttribute StatDamageMultiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
+	FModifiableAttribute StatBaseAttackSpeed;
+
     /* General Gameplay Value used during GameModeStates, has no meaning in and of itself */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
     FModifiableAttribute GameplayScoreValue;

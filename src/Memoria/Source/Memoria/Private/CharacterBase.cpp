@@ -88,6 +88,17 @@ ACharacterBase::ACharacterBase()
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
 	/**
+	 * Gameplay Stats defaults
+	 */
+	StatCooldownReduction = FModifiableAttribute(0.0f);
+
+	StatBaseDamage = FModifiableAttribute(5.0f);
+
+	StatDamageMultiplier = FModifiableAttribute(1.0f);
+
+	StatBaseAttackSpeed = FModifiableAttribute(1.0f);
+
+	/**
 	 * AI Blackboard Defaults
 	 */
 	MinEngagementRange = FModifiableAttribute(300.0f);

@@ -96,4 +96,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CharacterAttack")
 	FTimerHandle CooldownTimerHandle;
 
+	UFUNCTION(BlueprintCallable, Category = "CharacterAttack")
+	virtual float GetCooldown();
+
 };

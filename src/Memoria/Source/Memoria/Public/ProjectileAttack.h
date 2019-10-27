@@ -69,6 +69,8 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent, Category = "CharacterAttack")
 	void ReceiveCharacterSetup(ACharacterBase* character);
 
+	virtual float GetCooldown() override;
+
 	AProjectileBase* m_CachedProjectileClass;
 
 };
