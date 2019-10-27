@@ -16,6 +16,10 @@ void AChargeUpProjectileAttack::AttackStart()
 		return;
 	}
 
+	if (ownerCharacter->ManaComponent->IsReloading()) {
+		return;
+	}
+
 	if (ownerCharacter->ManaComponent->CurrentMana < ManaCost.GetValue()) {
 		OnInsufficientMana.Broadcast(ownerCharacter, this);
 		return;

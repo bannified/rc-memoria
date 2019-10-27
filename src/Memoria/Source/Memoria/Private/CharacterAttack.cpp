@@ -21,6 +21,19 @@ void ACharacterAttack::TeardownWithCharacter(ACharacterBase* ownerCharacter)
 
 void ACharacterAttack::AttackStart()
 {
+	if (ownerCharacter == nullptr) {
+		return;
+	}
+
+	if (ownerCharacter->ManaComponent->IsReloading()) {
+		return;
+	}
+
+	if (ownerCharacter->ManaComponent->CurrentMana < ManaCost.GetValue()) {
+		OnInsufficientMana.Broadcast(ownerCharacter, this);
+		return;
+	}
+
 	ReceiveAttackStart();
 }
 
