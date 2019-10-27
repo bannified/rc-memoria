@@ -2,17 +2,21 @@
 
 
 #include "CharacterAttack.h"
+#include "ManaComponent.h"
+#include "CharacterBase.h"
 
 void ACharacterAttack::SetupWithCharacter(ACharacterBase* character)
 {
 	this->ownerCharacter = character;
+
+	OnInsufficientMana.AddDynamic(this, &ACharacterAttack::StartReloadingOnCharacter);
 
 	OnReceiveSetupWithCharacter(character);
 }
 
 void ACharacterAttack::TeardownWithCharacter(ACharacterBase* ownerCharacter)
 {
-
+	OnInsufficientMana.RemoveDynamic(this, &ACharacterAttack::StartReloadingOnCharacter);
 }
 
 void ACharacterAttack::AttackStart()
@@ -30,4 +34,17 @@ void ACharacterAttack::OffCooldown()
 	b_OffCooldown = true;
 
 	OnCooldownOff.Broadcast(ownerCharacter, this);
+}
+
+void ACharacterAttack::StartReloadingOnCharacter(ACharacterBase* character, ACharacterAttack* attack)
+{
+	if (character == nullptr) {
+		return;
+	}
+
+	if (character->ManaComponent == nullptr) {
+		return;
+	}
+
+	character->ManaComponent->StartReload();
 }

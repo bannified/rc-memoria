@@ -15,7 +15,7 @@ void ABurstFireProjectileAttack::AttackStart()
 	float firstDelay = FMath::Max(LastFireTime + Cooldown.GetValue() - GetWorld()->TimeSeconds, 0.00f);
 
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ABurstFireProjectileAttack::BurstFire, Cooldown.GetValue(), true, firstDelay);
-	ownerCharacter->ManaComponent->InterruptReload();
+	//ownerCharacter->ManaComponent->InterruptReload();
 }
 
 void ABurstFireProjectileAttack::AttackEnd()

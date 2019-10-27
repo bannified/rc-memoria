@@ -83,6 +83,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterAttack")
 	bool IsInterruptable = true;
 
+	UPROPERTY(BlueprintCallable, BlueprintAssignable, Category = "CharacterAttack")
+	FAttackHandler OnInsufficientMana;
+
+	UFUNCTION()
+	void StartReloadingOnCharacter(ACharacterBase* character, ACharacterAttack* attack);
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CharacterAttack")
 	ACharacterBase* ownerCharacter;

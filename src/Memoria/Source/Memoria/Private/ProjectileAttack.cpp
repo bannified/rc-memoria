@@ -36,7 +36,6 @@ void AProjectileAttack::AttackStart()
 	float firstDelay = FMath::Max(LastFireTime + Cooldown.GetValue() - GetWorld()->TimeSeconds, 0.00f);
 
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AProjectileAttack::Fire, Cooldown.GetValue(), true, firstDelay);
-	ownerCharacter->ManaComponent->InterruptReload();
 
 	ownerCharacter->bUseControllerRotationYaw = true;
 }
@@ -60,6 +59,7 @@ void AProjectileAttack::Fire()
 	}
 
 	if (ownerCharacter->ManaComponent->CurrentMana < ManaCost.GetValue()) {
+		OnInsufficientMana.Broadcast(ownerCharacter, this);
 		return;
 	}
 

@@ -45,6 +45,10 @@ void UManaComponent::ModifyMana(float value, bool overflow)
 		CurrentMana = FMath::Min(CurrentMana, MaxMana);
 	}
 	
+	if (CurrentMana == 0) {
+		StartReload();
+	}
+
 	OnManaChangeEvent.Broadcast(Character, this);
 }
 

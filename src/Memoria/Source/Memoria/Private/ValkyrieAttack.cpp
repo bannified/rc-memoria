@@ -16,6 +16,7 @@ void AValkyrieAttack::AttackStart()
 	}
 
 	if (ManaCost.GetValue() > ownerCharacter->ManaComponent->CurrentMana) {
+		OnInsufficientMana.Broadcast(ownerCharacter, this);
 		return;
 	}
 

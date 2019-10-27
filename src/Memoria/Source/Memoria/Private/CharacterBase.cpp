@@ -396,6 +396,10 @@ void ACharacterBase::Special2End()
 
 void ACharacterBase::ReloadStart()
 {
+	if (ManaComponent->IsReloading()) {
+		return;
+	}
+
 	ManaComponent->StartReload();
 
 	if (ReloadingSound != nullptr) {
