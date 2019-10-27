@@ -269,6 +269,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CharacterBase|Perks")
 	UCharacterPerkComponent* AddPerk(TSubclassOf<UCharacterPerkComponent> perkClass);
 
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase|Perks")
+	void RemoveAndTeardownPerk(UCharacterPerkComponent* perkClass);
+
 	/**
 	 * Initialization
 	 */

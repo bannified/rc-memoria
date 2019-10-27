@@ -253,9 +253,16 @@ UCharacterPerkComponent* ACharacterBase::AddPerk(TSubclassOf<UCharacterPerkCompo
 {
 	UCharacterPerkComponent* perk = NewObject<UCharacterPerkComponent>(this, perkClass);
 	perk->RegisterComponent();
+	CharacterPerks.Add(perk);
 	//perk->Setup(this);
 
 	return perk;
+}
+
+void ACharacterBase::RemoveAndTeardownPerk(UCharacterPerkComponent* perk)
+{
+	CharacterPerks.RemoveSingle(perk);
+	perk->Teardown(this);
 }
 
 void ACharacterBase::MoveForward(float value)
