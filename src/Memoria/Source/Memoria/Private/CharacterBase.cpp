@@ -244,6 +244,8 @@ void ACharacterBase::BeginPlay()
 		perk->Setup(this);
 	}
 
+	HealthComponent->FullRestoreHealthComponent();
+
 	OnBeginPlayComplete();
 }
 

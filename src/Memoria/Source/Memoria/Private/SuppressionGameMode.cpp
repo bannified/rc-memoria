@@ -86,7 +86,7 @@ int ASuppressionGameMode::GetCurrentCheckpointIndex()
 	for (int i = 0; i < Objectives.Num(); i++)
 	{
 		ABase* base = Objectives[i];
-		totalHp += base->HealthComponent->maxHealth;
+		totalHp += base->HealthComponent->maxHealth.GetValue();
 		currentHp += base->HealthComponent->currentHealth;
 	}
 

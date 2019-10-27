@@ -30,7 +30,7 @@ public:
 	uint8 TeamNumber;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent|Gameplay")
-	float maxHealth;
+	FModifiableAttribute maxHealth;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "HealthComponent|Runtime")
 	float currentHealth;
@@ -48,7 +48,7 @@ public:
 	float CurrentShields;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent|Gameplay")
-	float MaxShields;
+	FModifiableAttribute MaxShields;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent|Gameplay")
 	float ShieldsInterval;
@@ -79,6 +79,9 @@ public:
 	//Initialize health with specified value
 	UFUNCTION(BlueprintCallable, Category = "HealthComponent")
 	void Init();
+
+	UFUNCTION(BlueprintCallable, Category = "HealthComponent")
+	void FullRestoreHealthComponent();
 
 	/** Changes the health value directly, ignoring shields. */
 	UFUNCTION(BlueprintCallable, Category = "HealthComponent")

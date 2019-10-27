@@ -72,7 +72,7 @@ void AKinesisBarrierAttack::AttackStart()
 
 	DamageAbsorbed = 0;
 
-	BarrierInstance->HealthComponent->AlterHealth(BarrierInstance->HealthComponent->maxHealth);
+	BarrierInstance->HealthComponent->AlterHealth(BarrierInstance->HealthComponent->maxHealth.GetValue());
 	UMemoriaStaticLibrary::SetActorEnabled(BarrierInstance, true);
 
 	GetWorld()->GetTimerManager().SetTimer(BarrierHoldTimeHandler, this, &AKinesisBarrierAttack::AttackEnd, MaxBarrierDuration.GetValue(), false);
