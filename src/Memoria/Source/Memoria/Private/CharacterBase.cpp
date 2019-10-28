@@ -92,6 +92,8 @@ ACharacterBase::ACharacterBase()
 	 */
 	StatCooldownReduction = FModifiableAttribute(0.0f);
 
+	StatAbilityDamage = FModifiableAttribute(10.0f);
+
 	StatBaseDamage = FModifiableAttribute(5.0f);
 
 	StatDamageMultiplier = FModifiableAttribute(1.0f);

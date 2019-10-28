@@ -155,6 +155,9 @@ public:
 	FModifiableAttribute StatCooldownReduction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
+	FModifiableAttribute StatAbilityDamage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
 	FModifiableAttribute StatBaseDamage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
