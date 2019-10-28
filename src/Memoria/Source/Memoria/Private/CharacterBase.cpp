@@ -250,8 +250,8 @@ void ACharacterBase::BeginPlay()
 		instance->SetupWithCharacter(this);
 	}
 
-	for (UCharacterPerkComponent* perk : CharacterPerks) {
-		perk->Setup(this);
+	for (int i = CharacterPerks.Num() - 1; i >= 0; i--) {
+		CharacterPerks[i]->Setup(this);
 	}
 
 	HealthComponent->FullRestoreHealthComponent();
