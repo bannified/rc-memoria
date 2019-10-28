@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "ModifiableAttribute.h"
 #include "ManaComponent.generated.h"
 
 class ACharacterBase;
@@ -23,7 +24,7 @@ public:
 	ACharacterBase* Character;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ManaComponent")
-	float MaxMana;
+	FModifiableAttribute MaxMana;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ManaComponent")
 	float CurrentMana;
@@ -35,7 +36,7 @@ public:
 	float ReloadValue;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ManaComponent")
-	float ReloadTime;
+	FModifiableAttribute ReloadTime;
 
 	UPROPERTY(BlueprintAssignable, Category = "ManaComponent")
 	FCharacterReload ReloadStartEvent;
