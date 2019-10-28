@@ -91,14 +91,15 @@ ACharacterBase::ACharacterBase()
 	 * Gameplay Stats defaults
 	 */
 	StatCooldownReduction = FModifiableAttribute(0.0f);
-
 	StatAbilityDamage = FModifiableAttribute(10.0f);
 
 	StatBaseDamage = FModifiableAttribute(5.0f);
-
 	StatDamageMultiplier = FModifiableAttribute(1.0f);
-
 	StatBaseAttackSpeed = FModifiableAttribute(1.0f);
+
+	StatMovementSpeed = FModifiableAttribute(1000.0f);
+	StatJumpVelocity = FModifiableAttribute(1200.0f);
+	StatGravityScale = FModifiableAttribute(2.0f);
 
 	/**
 	 * AI Blackboard Defaults
@@ -146,6 +147,13 @@ void ACharacterBase::UnPossessedByPlayerControllerBase(APlayerControllerBase* co
 	}
 
 	OnReceiveUnPossessedByPlayerControllerBase(controllerBase);
+}
+
+void ACharacterBase::UpdateMovementProperties()
+{
+	GetCharacterMovement()->MaxWalkSpeed = StatMovementSpeed.GetValue();
+	GetCharacterMovement()->JumpZVelocity = StatJumpVelocity.GetValue();
+	GetCharacterMovement()->GravityScale = StatGravityScale.GetValue();
 }
 
 void ACharacterBase::DestroySelf_Implementation()
@@ -247,6 +255,8 @@ void ACharacterBase::BeginPlay()
 	}
 
 	HealthComponent->FullRestoreHealthComponent();
+
+	UpdateMovementProperties();
 
 	OnBeginPlayComplete();
 }
