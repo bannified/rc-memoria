@@ -97,6 +97,8 @@ ACharacterBase::ACharacterBase()
 	StatDamageMultiplier = FModifiableAttribute(1.0f);
 	StatBaseAttackSpeed = FModifiableAttribute(1.0f);
 
+	StatBaseKnockback = FModifiableAttribute(100000.0f);
+
 	StatMovementSpeed = FModifiableAttribute(1000.0f);
 	StatJumpVelocity = FModifiableAttribute(1200.0f);
 	StatGravityScale = FModifiableAttribute(2.0f);
