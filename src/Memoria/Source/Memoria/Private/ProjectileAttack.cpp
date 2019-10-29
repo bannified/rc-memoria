@@ -133,7 +133,7 @@ void AProjectileAttack::Fire()
 	}
 	// set projectile damage.
 	projectile->DamageDealt = ownerCharacter->StatDamageMultiplier.GetValue() * (ownerCharacter->StatBaseDamage.GetValue() + projectile->DamageDealt);
-	projectile->KnockbackImpulse = ownerCharacter->StatBaseKnockback.GetValue();
+	projectile->KnockbackImpulse = projectile->KnockbackImpulse + ownerCharacter->StatBaseKnockback.GetValue();
 
 	UAnimMontage* montage = ownerCharacter->GetAnimWithName(AnimName);
 	if (montage != nullptr) {
@@ -216,7 +216,7 @@ void AProjectileAttack::ComplementaryFire()
 
 	// set projectile damage.
 	projectile->DamageDealt = ownerCharacter->StatDamageMultiplier.GetValue() * (ownerCharacter->StatBaseDamage.GetValue() + projectile->DamageDealt);
-	projectile->KnockbackImpulse = ownerCharacter->StatBaseKnockback.GetValue();
+	projectile->KnockbackImpulse = projectile->KnockbackImpulse + ownerCharacter->StatBaseKnockback.GetValue();
 
 	PlayFireEffects();
 
