@@ -29,4 +29,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Perks|Attack")
 	FAttributeModifier AttackSpeedModifier;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Perks|Attack")
+	FAttributeModifier KnockbackImpulseModifier;
+
 };

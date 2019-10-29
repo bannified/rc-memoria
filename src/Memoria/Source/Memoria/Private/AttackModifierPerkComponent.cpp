@@ -17,6 +17,10 @@ void UAttackModifierPerkComponent::Setup(ACharacterBase* character)
 	if (AttackSpeedModifier.Value != 0.0f) {
 		character->StatBaseAttackSpeed.AddModifier(AttackSpeedModifier);
 	}
+
+	if (KnockbackImpulseModifier.Value != 0.0f) {
+		character->StatBaseKnockback.AddModifier(KnockbackImpulseModifier);
+	}
 }
 
 void UAttackModifierPerkComponent::Teardown(ACharacterBase* character)
@@ -31,5 +35,9 @@ void UAttackModifierPerkComponent::Teardown(ACharacterBase* character)
 
 	if (AttackSpeedModifier.Value != 0.0f) {
 		character->StatBaseAttackSpeed.RemoveModifierSingle(AttackSpeedModifier);
+	}
+
+	if (KnockbackImpulseModifier.Value != 0.0f) {
+		character->StatBaseKnockback.RemoveModifierSingle(KnockbackImpulseModifier);
 	}
 }
