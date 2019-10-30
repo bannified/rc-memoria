@@ -4,10 +4,12 @@
 #include "SuppressionGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "Base.h"
+#include "HealthComponent.h"
 #include "GenericTeamAgentInterface.h"
 #include "MemoriaDeveloperSettings.h"
 #include "SuppressionEliminationGMS.h"
 #include "GameModeState.h"
+#include "AttributeModifier.h"
 #include "ObjectivePoint.h"
 
 ASuppressionGameMode::ASuppressionGameMode()
@@ -68,6 +70,9 @@ void ASuppressionGameMode::StartGame()
 
 		ABase* nObjective = GetWorld()->SpawnActor<ABase>(ObjectiveClass, finalPos, FRotator::ZeroRotator, params);
 		Objectives.Add(nObjective);
+
+		nObjective->HealthComponent->maxHealth.AddModifier(FAttributeModifier(CustomProperties.ObjectiveHealthModifier - 1.0f, EAttributeModType::PercentAdd));
+		nObjective->HealthComponent->FullRestoreHealthComponent();
 		nObjective->HealthComponent->DeathEvent.AddDynamic(this, &ASuppressionGameMode::CheckWinCondition);
 	}
 
