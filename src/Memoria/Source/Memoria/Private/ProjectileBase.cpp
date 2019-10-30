@@ -196,8 +196,9 @@ void AProjectileBase::ResolveAllEffects(UHealthComponent* healthComp, ACharacter
 
 		FVector direction = ProjectileMovement->Velocity;
 		direction.Normalize();
-		
-		enemy->GetCharacterMovement()->AddImpulse(direction * KnockbackImpulse);
+		if (enemy != nullptr) {
+			enemy->GetCharacterMovement()->AddImpulse(direction * KnockbackImpulse);
+		}
 	}
 
 	if (enemy != nullptr) {
