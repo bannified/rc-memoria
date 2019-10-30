@@ -91,12 +91,17 @@ ACharacterBase::ACharacterBase()
 	 * Gameplay Stats defaults
 	 */
 	StatCooldownReduction = FModifiableAttribute(0.0f);
+	StatAbilityDamage = FModifiableAttribute(10.0f);
 
 	StatBaseDamage = FModifiableAttribute(5.0f);
-
 	StatDamageMultiplier = FModifiableAttribute(1.0f);
-
 	StatBaseAttackSpeed = FModifiableAttribute(1.0f);
+
+	StatBaseKnockback = FModifiableAttribute(100000.0f);
+
+	StatMovementSpeed = FModifiableAttribute(1000.0f);
+	StatJumpVelocity = FModifiableAttribute(1200.0f);
+	StatGravityScale = FModifiableAttribute(2.0f);
 
 	/**
 	 * AI Blackboard Defaults
@@ -144,6 +149,13 @@ void ACharacterBase::UnPossessedByPlayerControllerBase(APlayerControllerBase* co
 	}
 
 	OnReceiveUnPossessedByPlayerControllerBase(controllerBase);
+}
+
+void ACharacterBase::UpdateMovementProperties()
+{
+	GetCharacterMovement()->MaxWalkSpeed = StatMovementSpeed.GetValue();
+	GetCharacterMovement()->JumpZVelocity = StatJumpVelocity.GetValue();
+	GetCharacterMovement()->GravityScale = StatGravityScale.GetValue();
 }
 
 void ACharacterBase::DestroySelf_Implementation()
@@ -240,9 +252,13 @@ void ACharacterBase::BeginPlay()
 		instance->SetupWithCharacter(this);
 	}
 
-	for (UCharacterPerkComponent* perk : CharacterPerks) {
-		perk->Setup(this);
+	for (int i = CharacterPerks.Num() - 1; i >= 0; i--) {
+		CharacterPerks[i]->Setup(this);
 	}
+
+	HealthComponent->FullRestoreHealthComponent();
+
+	UpdateMovementProperties();
 
 	OnBeginPlayComplete();
 }
@@ -251,9 +267,16 @@ UCharacterPerkComponent* ACharacterBase::AddPerk(TSubclassOf<UCharacterPerkCompo
 {
 	UCharacterPerkComponent* perk = NewObject<UCharacterPerkComponent>(this, perkClass);
 	perk->RegisterComponent();
+	CharacterPerks.Add(perk);
 	//perk->Setup(this);
 
 	return perk;
+}
+
+void ACharacterBase::RemoveAndTeardownPerk(UCharacterPerkComponent* perk)
+{
+	CharacterPerks.RemoveSingle(perk);
+	perk->Teardown(this);
 }
 
 void ACharacterBase::MoveForward(float value)

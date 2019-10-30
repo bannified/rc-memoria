@@ -155,6 +155,9 @@ public:
 	FModifiableAttribute StatCooldownReduction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
+	FModifiableAttribute StatAbilityDamage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
 	FModifiableAttribute StatBaseDamage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
@@ -163,9 +166,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
 	FModifiableAttribute StatBaseAttackSpeed;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
+	FModifiableAttribute StatBaseKnockback;
+
     /* General Gameplay Value used during GameModeStates, has no meaning in and of itself */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
     FModifiableAttribute GameplayScoreValue;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
+	FModifiableAttribute StatMovementSpeed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
+	FModifiableAttribute StatJumpVelocity;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
+	FModifiableAttribute StatGravityScale;
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase|Gameplay")
+	void UpdateMovementProperties();
 
 protected:
 
@@ -268,6 +284,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "CharacterBase|Perks")
 	UCharacterPerkComponent* AddPerk(TSubclassOf<UCharacterPerkComponent> perkClass);
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase|Perks")
+	void RemoveAndTeardownPerk(UCharacterPerkComponent* perkClass);
 
 	/**
 	 * Initialization
