@@ -321,7 +321,7 @@ void APlayerControllerBase::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
 
-	PRINT_INFO("Possessed called in ACharacterBase in PC: %s", *(this->GetName()));
+	//PRINT_INFO("Possessed called in ACharacterBase in PC: %s", *(this->GetName()));
 
 	ACharacterBase* character = Cast<ACharacterBase>(GetPawn());
 	if (character != nullptr)
