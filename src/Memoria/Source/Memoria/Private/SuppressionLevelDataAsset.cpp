@@ -3,6 +3,7 @@
 
 #include "SuppressionLevelDataAsset.h"
 #include "SuppressionGameMode.h"
+#include "GameCustomProperties.h"
 #include "Memoria.h"
 
 USuppressionLevelDataAsset::USuppressionLevelDataAsset()
@@ -26,6 +27,26 @@ void USuppressionLevelDataAsset::Setup(AGameControllerBase* controller)
 	{
 		return cp1.TargetLevelProgress > cp2.TargetLevelProgress;
 	});
+
+	// Set up custom properties/modifiers
+	FGameCustomProperties prop = controller->CustomProperties;
+	for (FSuppressionCheckpoint& cp : gm->Checkpoints)
+	{
+		cp.ObjectiveAssaultLifeTime *= prop.ObjectiveTimeModifier;
+		if (prop.SpawnCountMultiplier == 1.0f && prop.SpawnIntervalMultiplier == 1.0f) {
+			continue;
+		}
+		for (FSuppressionSpawnPattern& pattern : cp.Patterns) {
+			pattern.MinSpawnInterval *= prop.SpawnIntervalMultiplier;
+			pattern.MaxSpawnInterval *= prop.SpawnIntervalMultiplier;
+			if (prop.SpawnCountMultiplier == 1.0f) {
+				continue;
+			}
+			for (FSpawnUnitFinite& su : pattern.FiniteSpawnUnits) {
+				su.SpawnLimit *= prop.SpawnCountMultiplier;
+			}
+		}
+	}
 
 	OnReceiveSetup(controller);
 }
