@@ -203,9 +203,15 @@ class ACharacterBase* AGameControllerBase::SpawnWithSpawnUnitAssetAtLocation(USp
 		//unit->AddActorWorldOffset(FVector(0, 0, boxExtent.Z));
 		unit->SpawnUnitAsset = SpawnUnitAsset;
 		SpawnUnitAsset->InitializeUnit(unit);
-		// TODO: Invoke ISpawnable (if this interface gets made)
-		OnEnemyUnitSpawned.Broadcast(unit);
 
+		unit->HealthComponent->maxHealth.AddModifier(FAttributeModifier(CustomProperties.HealthMultiplier - 1.0f, EAttributeModType::PercentAdd));
+		unit->StatBaseDamage.AddModifier(FAttributeModifier(CustomProperties.DamageMultiplier - 1.0f, EAttributeModType::PercentAdd));
+		unit->StatAbilityDamage.AddModifier(FAttributeModifier(CustomProperties.DamageMultiplier - 1.0f, EAttributeModType::PercentAdd));
+		unit->StatMovementSpeed.AddModifier(FAttributeModifier(CustomProperties.MoveSpeedMultiplier - 1.0f, EAttributeModType::PercentAdd));
+		unit->UpdateMovementProperties();
+		unit->HealthComponent->FullRestoreHealthComponent();
+
+		OnEnemyUnitSpawned.Broadcast(unit);
 		return unit;
 	}
 
