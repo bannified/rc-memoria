@@ -89,6 +89,10 @@ void AValkyrieAttack::StartAscend()
 
 	GetWorld()->GetTimerManager().SetTimer(SharedTimerHandle, this, &AValkyrieAttack::Float, LaunchDuration, false);
 
+	// Restore mana to full
+	ownerCharacter->ManaComponent->ModifyMana(ownerCharacter->ManaComponent->MaxMana.GetValue());
+	ownerCharacter->StatBaseAttackSpeed.AddModifier(AttackSpeedModifier);
+
 	OnAscendStart.Broadcast(ownerCharacter, this);
 }
 
@@ -104,6 +108,8 @@ void AValkyrieAttack::StartDescent()
 	movementComp->GravityScale = OriginalGravityScale;
 
 	UMemoriaStaticLibrary::SetActorEnabled(BarrierInstance, false);
+
+	ownerCharacter->StatBaseAttackSpeed.RemoveModifierSingle(AttackSpeedModifier);
 
 	OnDescentStart.Broadcast(ownerCharacter, this);
 }

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CharacterAttack.h"
+#include "AttributeModifier.h"
 #include "ValkyrieAttack.generated.h"
 
 class ABarrier;
@@ -44,7 +45,6 @@ public:
 
 	virtual void SetupWithCharacter(ACharacterBase* character) override;
 
-
 	virtual void TeardownWithCharacter(ACharacterBase* character) override;
 
 protected:
@@ -73,4 +73,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "CharacterAttack|Valkyrie")
 	float OriginalGravityScale;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "CharacterAttack|Valkyrie")
+	FAttributeModifier AttackSpeedModifier;
 };
