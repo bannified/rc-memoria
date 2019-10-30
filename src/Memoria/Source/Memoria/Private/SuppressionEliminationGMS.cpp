@@ -79,6 +79,8 @@ void ASuppressionEliminationGMS::OnStateExit(AGameControllerBase* GameMode)
 		objective->HealthComponent->DamageResist.BaseValue = 0.0f;
 	}
 	Super::OnStateExit(GameMode);
+
+	Destroy();
 }
 
 void ASuppressionEliminationGMS::HandleEnemySpawn(AActor* enemy)

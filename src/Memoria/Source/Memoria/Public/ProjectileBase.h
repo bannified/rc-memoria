@@ -47,6 +47,9 @@ public:
 	TArray< UEnemyProjectileEffect* > UnitEffects;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileBase|Gameplay")
+	float KnockbackImpulse;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileBase|Gameplay")
 	float DamageDealt;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileBase|Gameplay")
@@ -68,11 +71,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileBase|Gameplay")
 	TSubclassOf<UMemoriaDamageType> CriticalDamageType;
 
-protected:
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	UProjectileMovementComponent* ProjectileMovement;
 
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ProjectileBase|Components")
 	UStaticMeshComponent* MeshComp;
 

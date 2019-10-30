@@ -11,7 +11,12 @@
 
 void AValkyrieAttack::AttackStart()
 {
+	if (ownerCharacter == nullptr) {
+		return;
+	}
+
 	if (ManaCost.GetValue() > ownerCharacter->ManaComponent->CurrentMana) {
+		OnInsufficientMana.Broadcast(ownerCharacter, this);
 		return;
 	}
 
@@ -41,6 +46,10 @@ void AValkyrieAttack::SetupWithCharacter(ACharacterBase* ownerCharacter)
 {
 	Super::SetupWithCharacter(ownerCharacter);
 
+	if (ownerCharacter == nullptr) {
+		return;
+	}
+
 	if (BarrierClass != nullptr) {
 		FActorSpawnParameters spawnParams;
 		spawnParams.Owner = ownerCharacter;
@@ -58,6 +67,10 @@ void AValkyrieAttack::SetupWithCharacter(ACharacterBase* ownerCharacter)
 
 void AValkyrieAttack::TeardownWithCharacter(ACharacterBase* ownerCharacter)
 {
+	if (ownerCharacter == nullptr) {
+		return;
+	}
+
 	if (BarrierInstance != nullptr) {
 		ownerCharacter->ActorsToIgnoreWhileAttacking.RemoveSingle(BarrierInstance);
 		BarrierInstance->Destroy();
@@ -66,6 +79,10 @@ void AValkyrieAttack::TeardownWithCharacter(ACharacterBase* ownerCharacter)
 
 void AValkyrieAttack::StartAscend()
 {
+	if (ownerCharacter == nullptr) {
+		return;
+	}
+
 	ownerCharacter->LaunchCharacter(FVector::UpVector * LaunchVelocity, false, false);
 
 	// Maybe disable the character from using other attacks?
@@ -77,6 +94,10 @@ void AValkyrieAttack::StartAscend()
 
 void AValkyrieAttack::StartDescent()
 {
+	if (ownerCharacter == nullptr) {
+		return;
+	}
+
 	UCharacterMovementComponent* movementComp = ownerCharacter->GetCharacterMovement();
 
 	movementComp->AddImpulse(FVector(0.0f, 0.0f, -DescentForce), true);
@@ -89,6 +110,10 @@ void AValkyrieAttack::StartDescent()
 
 void AValkyrieAttack::Float()
 {
+	if (ownerCharacter == nullptr) {
+		return;
+	}
+
 	UCharacterMovementComponent* movementComp = ownerCharacter->GetCharacterMovement();
 
 	movementComp->Velocity.Z = SpeedProportionCarryOverOnFloat * movementComp->Velocity.Z;
@@ -98,7 +123,7 @@ void AValkyrieAttack::Float()
 
 	GetWorld()->GetTimerManager().SetTimer(SharedTimerHandle, this, &AValkyrieAttack::StartDescent, FloatDuration, false);
 
-	BarrierInstance->HealthComponent->AlterHealth(BarrierInstance->HealthComponent->maxHealth);
+	BarrierInstance->HealthComponent->AlterHealth(BarrierInstance->HealthComponent->maxHealth.GetValue());
 	UMemoriaStaticLibrary::SetActorEnabled(BarrierInstance, true);
 
 	OnFloatStart.Broadcast(ownerCharacter, this);

@@ -9,6 +9,7 @@
 #include "SuppressionGameMode.generated.h"
 
 class ASuppressionEliminationGMS;
+class AObjectivePoint;
 
 /**
  * 
@@ -23,6 +24,9 @@ public:
 
 	virtual void StartGame() override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SuppressionGameMode")
+	int NumStartingObjectives;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "SuppressionGameMode")
 	TArray<FSuppressionCheckpoint> Checkpoints;
 
@@ -33,7 +37,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "SuppressionGameMode")
 	int GetCurrentCheckpointIndex();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SuppressionGameMode")
+	TArray<AObjectivePoint*> ObjectivePoints;
+
+	UFUNCTION(BlueprintCallable, Category = "SuppressionGameMode")
+	void CheckWinCondition();
+
 protected:
     // Called when the game starts or when spawned
     virtual void BeginPlay() override;
+
 };
