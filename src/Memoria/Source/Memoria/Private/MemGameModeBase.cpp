@@ -58,6 +58,8 @@ void AMemGameModeBase::StartGame(ULevelDataAsset* LevelData)
 {
 	FGenericTeamId::SetAttitudeSolver(&UMemoriaDeveloperSettings::GetAttitude);
 
+	b_GameWon = false;
+
 	if (LevelData == nullptr) {
 		PRINT_INFO("MemGameModeBase %s does not have a LevelData.", *(this->GetName()));
 		return;
@@ -103,4 +105,9 @@ void AMemGameModeBase::LoseGame()
 	//	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, TEXT("Lose Game!"));
 
 	OnGameLose.Broadcast();
+}
+
+void AMemGameModeBase::SetAIAttitudeSolver()
+{
+	FGenericTeamId::SetAttitudeSolver(&UMemoriaDeveloperSettings::GetAttitude);
 }

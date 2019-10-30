@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "ModifiableAttribute.h"
 #include "MemoriaTypes.h"
 #include "ProjectileBase.generated.h"
 
@@ -17,6 +18,7 @@ class UCharacterProjectileEffect;
 class UEnemyProjectileEffect;
 class ACharacterBase;
 class UHealthComponent;
+class UMemoriaDamageType;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnProjectileResolveDelegate, AProjectileBase*, projectile, const FHitResult&, Hit);
 
@@ -45,7 +47,13 @@ public:
 	TArray< UEnemyProjectileEffect* > UnitEffects;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileBase|Gameplay")
+	float KnockbackImpulse;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileBase|Gameplay")
 	float DamageDealt;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileBase|Gameplay")
+	FModifiableAttribute CriticalMultiplier;
 
 	// maybe move to another projectile
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileBase|Gameplay")
@@ -57,11 +65,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileBase|Gameplay")
 	bool CanFriendlyFire;
 
-protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileBase|Gameplay")
+	TSubclassOf<UMemoriaDamageType> NormalDamageType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileBase|Gameplay")
+	TSubclassOf<UMemoriaDamageType> CriticalDamageType;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	UProjectileMovementComponent* ProjectileMovement;
 
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ProjectileBase|Components")
 	UStaticMeshComponent* MeshComp;
 

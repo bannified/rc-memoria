@@ -20,7 +20,7 @@ public:
 
 	virtual void Teardown(ACharacterBase* character) override;
 
-	UPROPERTY(EditDefaultsOnly, Category = "CharacterPerk")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "CharacterPerk")
 	uint8 MaxJumpCount;
 
 private:

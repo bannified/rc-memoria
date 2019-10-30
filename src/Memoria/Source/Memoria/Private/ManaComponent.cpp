@@ -12,6 +12,8 @@ UManaComponent::UManaComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
+	MaxMana = FModifiableAttribute(100.0f);
+	ReloadTime = FModifiableAttribute(1.2f);
 }
 
 
@@ -25,7 +27,7 @@ void UManaComponent::BeginPlay()
 		Character = castedOwner;
 	}
 
-	ModifyMana(StartingMana);
+	ModifyMana(MaxMana.GetValue());
 	
 }
 
@@ -42,15 +44,19 @@ void UManaComponent::ModifyMana(float value, bool overflow)
 {
 	CurrentMana += value;
 	if (!overflow) {
-		CurrentMana = FMath::Max(CurrentMana + value, MaxMana);
+		CurrentMana = FMath::Min(CurrentMana, MaxMana.GetValue());
 	}
 	
+	if (CurrentMana == 0) {
+		StartReload();
+	}
+
 	OnManaChangeEvent.Broadcast(Character, this);
 }
 
 void UManaComponent::StartReload()
 {
-	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &UManaComponent::ReloadDone, ReloadTime, false, -1.f);
+	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &UManaComponent::ReloadDone, ReloadTime.GetValue(), false, -1.f);
 
 	ReloadStartEvent.Broadcast(Character, this);
 
@@ -67,7 +73,7 @@ void UManaComponent::ReloadDone()
 {
 	GetWorld()->GetTimerManager().ClearTimer(ReloadTimerHandle);
 
-	ModifyMana(ReloadValue);
+	ModifyMana(MaxMana.GetValue());
 
 	ReloadCompleteEvent.Broadcast(Character, this);
 

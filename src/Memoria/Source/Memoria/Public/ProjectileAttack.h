@@ -7,6 +7,8 @@
 #include "ProjectileAttack.generated.h"
 
 class AProjectileBase;
+class USoundBase;
+class UParticleSystem;
 
 /**
  * 
@@ -20,14 +22,26 @@ public:
 
 	AProjectileAttack();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterAttack")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterAttack|ProjectileAttack")
 	TSubclassOf<AProjectileBase> ProjectileClass;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "CharacterAttack")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "CharacterAttack|ProjectileAttack")
 	FName MuzzleSocketName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterAttack")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterAttack|ProjectileAttack")
 	FModifiableAttribute BulletSpreadAngle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterAttack|ProjectileAttack")
+	USoundBase* ProjectileFireSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterAttack|ProjectileAttack")
+	UParticleSystem* MuzzleFlash;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterAttack|ProjectileAttack")
+	FVector MuzzleFlashScale = FVector(1, 1, 1);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "CharacterAttack|ProjectileAttack")
+	FName AnimName;
 
 	virtual void SetupWithCharacter(ACharacterBase* character) override;
 
@@ -47,11 +61,15 @@ public:
 	FAttackHandler OnNormalFire;
 	UPROPERTY(BlueprintAssignable, Category = "CharacterAttack")
 	FAttackHandler OnComplementaryFire;
+	UFUNCTION(BlueprintCallable, Category = "CharacterAttack")
+	virtual void PlayFireEffects();
 
 protected:	
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "CharacterAttack")
 	void ReceiveCharacterSetup(ACharacterBase* character);
+
+	virtual float GetCooldown() override;
 
 	AProjectileBase* m_CachedProjectileClass;
 

@@ -62,6 +62,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MemGameModeBase|Manipulation")
 	void LoseGame();
 
+	UFUNCTION(BlueprintCallable, Category = "MemGameModeBase|AI")
+	void SetAIAttitudeSolver();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MemGameModeBase|Spawning")
 	ULevelDataAsset* CurrentLevelDataAsset;
 

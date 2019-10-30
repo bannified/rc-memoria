@@ -36,6 +36,10 @@ void AKinesisBarrierAttack::SetupWithCharacter(ACharacterBase* ownerCharacter)
 
 void AKinesisBarrierAttack::TeardownWithCharacter(ACharacterBase* ownerCharacter)
 {
+	if (ownerCharacter == nullptr) {
+		return;
+	}
+
 	if (BarrierInstance != nullptr) {
 		ownerCharacter->ActorsToIgnoreWhileAttacking.RemoveSingle(BarrierInstance);
 		BarrierInstance->Destroy();
@@ -44,7 +48,12 @@ void AKinesisBarrierAttack::TeardownWithCharacter(ACharacterBase* ownerCharacter
 
 void AKinesisBarrierAttack::AttackStart()
 {
+	if (ownerCharacter == nullptr) {
+		return;
+	}
+
 	if (ManaCost.GetValue() > ownerCharacter->ManaComponent->CurrentMana) {
+		OnInsufficientMana.Broadcast(ownerCharacter, this);
 		return;
 	}
 
@@ -63,7 +72,7 @@ void AKinesisBarrierAttack::AttackStart()
 
 	DamageAbsorbed = 0;
 
-	BarrierInstance->HealthComponent->AlterHealth(BarrierInstance->HealthComponent->maxHealth);
+	BarrierInstance->HealthComponent->AlterHealth(BarrierInstance->HealthComponent->maxHealth.GetValue());
 	UMemoriaStaticLibrary::SetActorEnabled(BarrierInstance, true);
 
 	GetWorld()->GetTimerManager().SetTimer(BarrierHoldTimeHandler, this, &AKinesisBarrierAttack::AttackEnd, MaxBarrierDuration.GetValue(), false);
@@ -72,6 +81,10 @@ void AKinesisBarrierAttack::AttackStart()
 
 void AKinesisBarrierAttack::AttackEnd()
 {
+	if (ownerCharacter == nullptr) {
+		return;
+	}
+
 	if (!HasAttackStarted) {
 		return;
 	}
