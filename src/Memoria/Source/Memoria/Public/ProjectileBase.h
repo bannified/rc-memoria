@@ -47,6 +47,9 @@ public:
 	TArray< UEnemyProjectileEffect* > UnitEffects;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileBase|Gameplay")
+	float KnockbackImpulse;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileBase|Gameplay")
 	float DamageDealt;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileBase|Gameplay")

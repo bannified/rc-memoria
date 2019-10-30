@@ -16,7 +16,12 @@ void AChargeUpProjectileAttack::AttackStart()
 		return;
 	}
 
+	if (ownerCharacter->ManaComponent->IsReloading()) {
+		return;
+	}
+
 	if (ownerCharacter->ManaComponent->CurrentMana < ManaCost.GetValue()) {
+		OnInsufficientMana.Broadcast(ownerCharacter, this);
 		return;
 	}
 
@@ -27,7 +32,7 @@ void AChargeUpProjectileAttack::AttackStart()
 
 	float firstDelay = FMath::Max(LastFireTime + Cooldown.GetValue() - GetWorld()->TimeSeconds, 0.00f);
 
-	ownerCharacter->ManaComponent->InterruptReload();
+	//ownerCharacter->ManaComponent->InterruptReload();
 
 	ChargeBegin();
 

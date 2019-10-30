@@ -36,4 +36,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "ProjectileAttack|BurstFire")
 	int InterBurstCount;
 
+	UFUNCTION(BlueprintCallable, Category = "ProjectileAttack|BurstFire")
+	float GetBurstInterval();
+
+	//virtual FTimerHandle GetDisplayedCooldownTimerHandle() override;
+
+	float LastBurstTime = 0.0f;
 };

@@ -3,6 +3,7 @@
 
 #include "BurstFireProjectileAttack.h"
 #include "ManaComponent.h"
+#include "CharacterBase.h"
 
 void ABurstFireProjectileAttack::AttackStart()
 {
@@ -10,12 +11,16 @@ void ABurstFireProjectileAttack::AttackStart()
 		return;
 	}
 
+	if (!b_OffCooldown) {
+		return;
+	}
+
 	ReceiveAttackStart();
 
-	float firstDelay = FMath::Max(LastFireTime + Cooldown.GetValue() - GetWorld()->TimeSeconds, 0.00f);
+	float firstDelay = FMath::Max(LastFireTime + GetCooldown() - GetWorld()->TimeSeconds, 0.00f);
 
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ABurstFireProjectileAttack::BurstFire, Cooldown.GetValue(), true, firstDelay);
-	ownerCharacter->ManaComponent->InterruptReload();
+	BurstFire();
+	//ownerCharacter->ManaComponent->InterruptReload();
 }
 
 void ABurstFireProjectileAttack::AttackEnd()
@@ -29,14 +34,27 @@ void ABurstFireProjectileAttack::Fire()
 
 	Super::Fire();
 
+	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &ABurstFireProjectileAttack::OffCooldown, 9999.9f, false);
+
 	if (InterBurstCount >= BurstCount.GetValue()) {
 		GetWorld()->GetTimerManager().ClearTimer(BurstTimerHandle);
-		GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+		GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &ABurstFireProjectileAttack::OffCooldown, GetCooldown(), false);
 		InterBurstCount = 0;
 	}
 }
 
 void ABurstFireProjectileAttack::BurstFire()
 {
-	GetWorld()->GetTimerManager().SetTimer(BurstTimerHandle, this, &ABurstFireProjectileAttack::Fire, BurstInterval.GetValue(), true);
+	b_OffCooldown = false;
+	Fire();
+	GetWorld()->GetTimerManager().SetTimer(BurstTimerHandle, this, &ABurstFireProjectileAttack::Fire, GetBurstInterval(), true);
+}
+
+float ABurstFireProjectileAttack::GetBurstInterval()
+{
+	if (ownerCharacter == nullptr) {
+		return BurstInterval.GetValue();
+	}
+
+	return FMath::Max(0.0f, BurstInterval.GetValue() * (1.0f / ownerCharacter->StatBaseAttackSpeed.GetValue())); // percentage based cooldown reduction
 }

@@ -83,11 +83,26 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterAttack")
 	bool IsInterruptable = true;
 
+	UPROPERTY(BlueprintCallable, BlueprintAssignable, Category = "CharacterAttack")
+	FAttackHandler OnInsufficientMana;
+
+	UFUNCTION()
+	void StartReloadingOnCharacter(ACharacterBase* character, ACharacterAttack* attack);
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CharacterAttack")
 	ACharacterBase* ownerCharacter;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CharacterAttack")
 	FTimerHandle CooldownTimerHandle;
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterAttack")
+	virtual float GetCooldown();
+	
+	UFUNCTION(BlueprintCallable, Category = "CharacterAttack")
+	virtual float GetDisplayedCooldown();
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterAttack")
+	virtual FTimerHandle GetDisplayedCooldownTimerHandle();
 
 };

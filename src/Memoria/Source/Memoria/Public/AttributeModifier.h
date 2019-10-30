@@ -37,6 +37,9 @@ struct FAttributeModifier
 		Type = EAttributeModType::Flat;
 	};
 
+	FAttributeModifier(float Value, EAttributeModType Type)
+		: Value(Value), Order(0), Type(Type) {}
+
 	FAttributeModifier(float Value, int Order, EAttributeModType Type)
 		: Value(Value), Order(Order), Type(Type) {}
 

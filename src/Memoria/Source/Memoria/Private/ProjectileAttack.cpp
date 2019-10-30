@@ -36,7 +36,6 @@ void AProjectileAttack::AttackStart()
 	float firstDelay = FMath::Max(LastFireTime + Cooldown.GetValue() - GetWorld()->TimeSeconds, 0.00f);
 
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AProjectileAttack::Fire, Cooldown.GetValue(), true, firstDelay);
-	ownerCharacter->ManaComponent->InterruptReload();
 
 	ownerCharacter->bUseControllerRotationYaw = true;
 }
@@ -59,13 +58,18 @@ void AProjectileAttack::Fire()
 		return;
 	}
 
+	if (ownerCharacter->ManaComponent->IsReloading()) {
+		return;
+	}
+
 	if (ownerCharacter->ManaComponent->CurrentMana < ManaCost.GetValue()) {
+		OnInsufficientMana.Broadcast(ownerCharacter, this);
 		return;
 	}
 
 	ownerCharacter->ManaComponent->ModifyMana(-ManaCost.GetValue());
 
-	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &ACharacterAttack::OffCooldown, Cooldown.GetValue(), false);
+	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &ACharacterAttack::OffCooldown, GetCooldown(), false);
 
 	FVector cameraLocation;
 	FRotator cameraRotation;
@@ -128,6 +132,8 @@ void AProjectileAttack::Fire()
 		projectile->AddIgnoredActor(actor);
 	}
 	// set projectile damage.
+	projectile->DamageDealt = ownerCharacter->StatDamageMultiplier.GetValue() * (ownerCharacter->StatBaseDamage.GetValue() + projectile->DamageDealt);
+	projectile->KnockbackImpulse = projectile->KnockbackImpulse + ownerCharacter->StatBaseKnockback.GetValue();
 
 	UAnimMontage* montage = ownerCharacter->GetAnimWithName(AnimName);
 	if (montage != nullptr) {
@@ -207,7 +213,10 @@ void AProjectileAttack::ComplementaryFire()
 	for (AActor* actor : ownerCharacter->ActorsToIgnoreWhileAttacking) {
 		projectile->AddIgnoredActor(actor);
 	}
+
 	// set projectile damage.
+	projectile->DamageDealt = ownerCharacter->StatDamageMultiplier.GetValue() * (ownerCharacter->StatBaseDamage.GetValue() + projectile->DamageDealt);
+	projectile->KnockbackImpulse = projectile->KnockbackImpulse + ownerCharacter->StatBaseKnockback.GetValue();
 
 	PlayFireEffects();
 
@@ -236,4 +245,13 @@ void AProjectileAttack::PlayFireEffects()
 	if (MuzzleFlash != nullptr) {
 		UGameplayStatics::SpawnEmitterAttached(MuzzleFlash, attachComponent, MuzzleSocketName, MuzzleFlashScale, FRotator::ZeroRotator, EAttachLocation::SnapToTarget, true, EPSCPoolMethod::AutoRelease);
 	}
+}
+
+float AProjectileAttack::GetCooldown()
+{
+	if (ownerCharacter == nullptr) {
+		return Cooldown.GetValue();
+	}
+
+	return FMath::Max(0.0f, Cooldown.GetValue() * (1.0f / ownerCharacter->StatBaseAttackSpeed.GetValue())); // percentage based cooldown reduction
 }
