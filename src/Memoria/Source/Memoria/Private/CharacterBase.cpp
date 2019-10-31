@@ -235,9 +235,9 @@ void ACharacterBase::BeginPlay()
 		EquipWeapon(DefaultWeaponClass);
 	}
 
-	if (HealthComponent != nullptr) {
-		HealthComponent->DeathEvent.AddDynamic(this, &ACharacterBase::DestroySelf);
-	}
+	//if (HealthComponent != nullptr) {
+	//	HealthComponent->DeathEvent.AddDynamic(this, &ACharacterBase::DestroySelf);
+	//}
 
 	// Setup Perk Components
 	TArray< UActorComponent* > collectedActors = GetComponentsByClass(UCharacterPerkComponent::StaticClass());
