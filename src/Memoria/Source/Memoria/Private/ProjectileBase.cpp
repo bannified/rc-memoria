@@ -180,14 +180,16 @@ void AProjectileBase::ResolveAllEffects(UHealthComponent* healthComp, ACharacter
 	
 
 	if (AoeRadius > 0.0f) {
-		UGameplayStatics::ApplyRadialDamage(GetWorld(), DamageDealt, Hit.ImpactPoint, AoeRadius, finalDamageType, TArray<AActor*>(), OwningActor, OwningController, true, COLLISION_PROJECTILEAOEBLOCK);
-		UAISense_Hearing::ReportNoiseEvent(GetWorld(), Hit.ImpactPoint, 1.0F, OwningActor, AoeRadius);
-		characterBase->OnDealDamage.Broadcast(Hit.ImpactPoint, finalDamageType->GetDefaultObject<UDamageType>(), characterBase, enemy);
-
 		ARadialForceActor* forceSpawn = GetWorld()->SpawnActor<ARadialForceActor>(ARadialForceActor::StaticClass(), Hit.ImpactPoint, FRotator::ZeroRotator, spawnParams);
 		forceSpawn->GetForceComponent()->ImpulseStrength = KnockbackImpulse;
 		forceSpawn->GetForceComponent()->Radius = AoeRadius;
 		forceSpawn->FireImpulse();
+
+		UGameplayStatics::ApplyRadialDamage(GetWorld(), DamageDealt, Hit.ImpactPoint, AoeRadius, finalDamageType, TArray<AActor*>(), OwningActor, OwningController, true, COLLISION_PROJECTILEAOEBLOCK);
+		UAISense_Hearing::ReportNoiseEvent(GetWorld(), Hit.ImpactPoint, 1.0F, OwningActor, AoeRadius);
+		characterBase->OnDealDamage.Broadcast(Hit.ImpactPoint, finalDamageType->GetDefaultObject<UDamageType>(), characterBase, enemy);
+
+
 	}
 	else {
 		UGameplayStatics::ApplyDamage(Hit.GetActor(), DamageDealt, OwningController, OwningActor, finalDamageType);
