@@ -6,7 +6,7 @@
 #include "CharacterBase.h"
 #include "CharacterPerkComponent.h"
 
-FORCEINLINE_DEBUGGABLE void UMemoriaStaticLibrary::AddModifierToAttribute(FModifiableAttribute& attribute, const FAttributeModifier& mod)
+void UMemoriaStaticLibrary::AddModifierToAttribute(FModifiableAttribute& attribute, const FAttributeModifier& mod)
 {
 	attribute.AddModifier(mod);
 }
@@ -20,12 +20,12 @@ void UMemoriaStaticLibrary::AddModifiersToAttribute(FModifiableAttribute& attrib
 	attribute.SortMods();
 }
 
-FORCEINLINE_DEBUGGABLE void UMemoriaStaticLibrary::RemoveSingleModifier(FModifiableAttribute& attribute, const FAttributeModifier& mod)
+void UMemoriaStaticLibrary::RemoveSingleModifier(FModifiableAttribute& attribute, const FAttributeModifier& mod)
 {
 	attribute.RemoveModifierSingle(mod);
 }
 
-FORCEINLINE_DEBUGGABLE void UMemoriaStaticLibrary::RemoveAllWithModifier(FModifiableAttribute& attribute, const FAttributeModifier& mod)
+void UMemoriaStaticLibrary::RemoveAllWithModifier(FModifiableAttribute& attribute, const FAttributeModifier& mod)
 {
 	attribute.RemoveModifiers(mod);
 }
@@ -35,7 +35,7 @@ float UMemoriaStaticLibrary::GetModifiableAttributeValue(FModifiableAttribute& a
 	return attribute.GetValue();
 }
 
-FORCEINLINE_DEBUGGABLE void UMemoriaStaticLibrary::SetActorEnabled(AActor* actor, bool enabled)
+void UMemoriaStaticLibrary::SetActorEnabled(AActor* actor, bool enabled)
 {
 	actor->SetActorHiddenInGame(!enabled);
 	actor->SetActorEnableCollision(enabled);
