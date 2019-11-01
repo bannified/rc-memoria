@@ -79,3 +79,8 @@ void UManaComponent::ReloadDone()
 
 }
 
+void UManaComponent::FullRestoreMana()
+{
+	ModifyMana(MaxMana.GetValue(), false);
+}
+

@@ -73,6 +73,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "ManaComponent")
 	FORCEINLINE bool IsReloading() { return GetWorld()->GetTimerManager().TimerExists(ReloadTimerHandle); }
 
+	UFUNCTION(BlueprintCallable, Category = "ManaComponent")
+	void FullRestoreMana();
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
