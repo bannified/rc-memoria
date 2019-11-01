@@ -34,7 +34,7 @@ void ASuppressionEliminationGMS::OnStateStart(AGameControllerBase* GameMode)
 
 	for (ABase* objective : GameMode->Objectives) {
 		// Deactivate shields
-		objective->HealthComponent->DamageResist.BaseValue = 1.0f;
+		objective->Hide();
 	}
 
 	ReceiveOnStateStart(GameMode);
@@ -76,7 +76,7 @@ void ASuppressionEliminationGMS::OnStateExit(AGameControllerBase* GameMode)
 {
 	for (ABase* objective : GameMode->Objectives) {
 		// Deactivate shields
-		objective->HealthComponent->DamageResist.BaseValue = 0.0f;
+		objective->Reveal();
 	}
 	Super::OnStateExit(GameMode);
 

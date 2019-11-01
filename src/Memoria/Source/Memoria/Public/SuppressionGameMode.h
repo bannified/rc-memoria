@@ -43,6 +43,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "SuppressionGameMode")
 	void CheckWinCondition();
 
+	//UFUNCTION(BlueprintCallable, Category = "SuppressionGameMode")
+	//void RandomizePositionsOfObjectives();
+
 protected:
     // Called when the game starts or when spawned
     virtual void BeginPlay() override;

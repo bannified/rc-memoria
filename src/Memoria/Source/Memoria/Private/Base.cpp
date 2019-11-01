@@ -51,6 +51,22 @@ void ABase::BeginPlay()
 	HealthComponent->Init();
 }
 
+void ABase::Hide()
+{
+	SetActorHiddenInGame(true);
+	SetActorEnableCollision(false);
+
+	OnHide();
+}
+
+void ABase::Reveal()
+{
+	SetActorHiddenInGame(false);
+	SetActorEnableCollision(true);
+
+	OnReveal();
+}
+
 // Called every frame
 void ABase::Tick(float DeltaTime)
 {

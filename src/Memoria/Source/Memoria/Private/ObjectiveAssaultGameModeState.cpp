@@ -16,6 +16,8 @@ void AObjectiveAssaultGameModeState::OnStateEnter(AGameControllerBase* GameMode)
 	this->GameModeBase = GameMode;
 
 	for (ABase* objective : GameMode->Objectives) {
+		// show objective
+		objective->Reveal();
 		// Deactivate shields
 		UMemoriaStaticLibrary::SetSceneComponentEnabled(objective->DamageTriggerMesh, false);
 		UMemoriaStaticLibrary::SetSceneComponentEnabled(objective->DamageTriggerCollider, false);
@@ -54,6 +56,7 @@ void AObjectiveAssaultGameModeState::OnStateExit(AGameControllerBase* GameMode)
 	Super::OnStateEnter(GameMode);
 
 	for (ABase* objective : GameMode->Objectives) {
+		objective->Hide();
 		// Reactivate shields
 		UMemoriaStaticLibrary::SetSceneComponentEnabled(objective->DamageTriggerMesh, true);
 		UMemoriaStaticLibrary::SetSceneComponentEnabled(objective->DamageTriggerCollider, true);

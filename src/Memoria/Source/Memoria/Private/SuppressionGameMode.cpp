@@ -74,6 +74,8 @@ void ASuppressionGameMode::StartGame()
 		nObjective->HealthComponent->maxHealth.AddModifier(FAttributeModifier(CustomProperties.ObjectiveHealthModifier - 1.0f, EAttributeModType::PercentAdd));
 		nObjective->HealthComponent->FullRestoreHealthComponent();
 		nObjective->HealthComponent->DeathEvent.AddDynamic(this, &ASuppressionGameMode::CheckWinCondition);
+
+		nObjective->Hide();
 	}
 
 	AGameModeState* nextState = GetWorld()->SpawnActor<AGameModeState>(SuppressionEliminationGMSClass, FVector::ZeroVector, FRotator::ZeroRotator);
