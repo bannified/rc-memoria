@@ -35,6 +35,12 @@ float UMemoriaStaticLibrary::GetModifiableAttributeValue(FModifiableAttribute& a
 	return attribute.GetValue();
 }
 
+float UMemoriaStaticLibrary::SetModifiableAttributeBaseValue(FModifiableAttribute& attribute, float value)
+{
+	attribute.BaseValue = value;
+	return attribute.GetValue();
+}
+
 void UMemoriaStaticLibrary::SetActorEnabled(AActor* actor, bool enabled)
 {
 	actor->SetActorHiddenInGame(!enabled);
