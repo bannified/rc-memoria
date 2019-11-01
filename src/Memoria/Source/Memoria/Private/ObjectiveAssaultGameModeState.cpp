@@ -53,8 +53,6 @@ void AObjectiveAssaultGameModeState::OnStateStop(AGameControllerBase* GameMode)
 
 void AObjectiveAssaultGameModeState::OnStateExit(AGameControllerBase* GameMode)
 {
-	Super::OnStateEnter(GameMode);
-
 	for (ABase* objective : GameMode->Objectives) {
 		objective->Hide();
 		// Reactivate shields
