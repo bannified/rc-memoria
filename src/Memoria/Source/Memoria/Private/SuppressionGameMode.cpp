@@ -71,6 +71,7 @@ void ASuppressionGameMode::StartGame()
 		ABase* nObjective = GetWorld()->SpawnActor<ABase>(ObjectiveClass, finalPos, FRotator::ZeroRotator, params);
 		Objectives.Add(nObjective);
 
+		nObjective->HealthComponent->maxHealth.BaseValue = ObjectiveStartingHealth;
 		nObjective->HealthComponent->maxHealth.AddModifier(FAttributeModifier(CustomProperties.ObjectiveHealthModifier - 1.0f, EAttributeModType::PercentAdd));
 		nObjective->HealthComponent->FullRestoreHealthComponent();
 		nObjective->HealthComponent->DeathEvent.AddDynamic(this, &ASuppressionGameMode::CheckWinCondition);

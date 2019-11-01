@@ -9,6 +9,9 @@
 USuppressionLevelDataAsset::USuppressionLevelDataAsset()
 {
 	GameControllerClass = ASuppressionGameMode::StaticClass();
+
+	NumOfObjectives = 1;
+	ObjectiveStartingHealth = 300.0f;
 }
 
 void USuppressionLevelDataAsset::Setup(AGameControllerBase* controller)
@@ -47,6 +50,9 @@ void USuppressionLevelDataAsset::Setup(AGameControllerBase* controller)
 			}
 		}
 	}
+
+	gm->NumStartingObjectives = NumOfObjectives;
+	gm->ObjectiveStartingHealth = ObjectiveStartingHealth;
 
 	OnReceiveSetup(controller);
 }

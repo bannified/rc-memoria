@@ -20,6 +20,12 @@ public:
 	USuppressionLevelDataAsset();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Suppression")
+	int NumOfObjectives;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Suppression")
+	float ObjectiveStartingHealth;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Suppression")
 	TArray<FSuppressionCheckpoint> Checkpoints;
 
 	virtual void Setup(AGameControllerBase* controller) override;

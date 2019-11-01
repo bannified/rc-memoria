@@ -27,6 +27,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SuppressionGameMode")
 	int NumStartingObjectives;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SuppressionGameMode")
+	float ObjectiveStartingHealth;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "SuppressionGameMode")
 	TArray<FSuppressionCheckpoint> Checkpoints;
 
