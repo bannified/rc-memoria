@@ -160,6 +160,25 @@ void ACharacterBase::UpdateMovementProperties()
 
 void ACharacterBase::DestroySelf_Implementation()
 {
+	for (int i = Attacks.Num() - 1; i >= 0; i--) {
+		ACharacterAttack* instance = Attacks[i];
+		if (instance == nullptr) {
+			continue;
+		}
+		instance->TeardownWithCharacter(this);
+		instance->Destroy();
+	}
+	Attacks.Empty();
+
+	for (int i = CharacterPerks.Num() - 1; i >= 0; i--) {
+		if (CharacterPerks[i] == nullptr) {
+			continue;
+		}
+		CharacterPerks[i]->Teardown(this);
+	}
+
+	CharacterPerks.Empty();
+
 	OnDestroy.Broadcast(this);
 	Destroy();
 }
