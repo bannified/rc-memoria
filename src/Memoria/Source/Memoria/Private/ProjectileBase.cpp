@@ -175,21 +175,23 @@ void AProjectileBase::ResolveAllEffects(UHealthComponent* healthComp, ACharacter
 
 	FActorSpawnParameters spawnParams;
 	//spawnParams.Owner = ownerCharacter;
-	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-
-	
+	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;	
 
 	if (AoeRadius > 0.0f) {
 		ARadialForceActor* forceSpawn = GetWorld()->SpawnActor<ARadialForceActor>(ARadialForceActor::StaticClass(), Hit.ImpactPoint, FRotator::ZeroRotator, spawnParams);
 		forceSpawn->GetForceComponent()->ImpulseStrength = KnockbackImpulse;
 		forceSpawn->GetForceComponent()->Radius = AoeRadius;
 		forceSpawn->FireImpulse();
-		characterBase->OnDealDamage.Broadcast(Hit.ImpactPoint, finalDamageType->GetDefaultObject<UDamageType>(), characterBase, enemy);
+		if (characterBase != nullptr) {
+			characterBase->OnDealDamage.Broadcast(Hit.ImpactPoint, finalDamageType->GetDefaultObject<UDamageType>(), characterBase, enemy);
+		}
 		UGameplayStatics::ApplyRadialDamage(GetWorld(), DamageDealt, Hit.ImpactPoint, AoeRadius, finalDamageType, TArray<AActor*>(), OwningActor, OwningController, true, COLLISION_PROJECTILEAOEBLOCK);
 		//UAISense_Hearing::ReportNoiseEvent(GetWorld(), Hit.ImpactPoint, 1.0F, OwningActor, AoeRadius);
 	}
 	else {
-		characterBase->OnDealDamage.Broadcast(Hit.ImpactPoint, finalDamageType->GetDefaultObject<UDamageType>(), characterBase, enemy);
+		if (characterBase != nullptr) {
+			characterBase->OnDealDamage.Broadcast(Hit.ImpactPoint, finalDamageType->GetDefaultObject<UDamageType>(), characterBase, enemy);
+		}
 		UGameplayStatics::ApplyDamage(Hit.GetActor(), DamageDealt, OwningController, OwningActor, finalDamageType);
 		//UAISense_Hearing::ReportNoiseEvent(GetWorld(), Hit.ImpactPoint, 1.f, OwningActor);
 		FVector direction = ProjectileMovement->Velocity;
