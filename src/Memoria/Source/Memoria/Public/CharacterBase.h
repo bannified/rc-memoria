@@ -459,6 +459,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Advanced Movement")
 	float b_CanBoost;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Advanced Movement")
 	FTimerHandle Boost_Cooldown_TimerHandle;
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable, Category = "Advanced Movement")
