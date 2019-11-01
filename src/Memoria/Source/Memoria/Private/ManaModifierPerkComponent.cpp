@@ -14,6 +14,8 @@ void UManaModifierPerkComponent::Setup(ACharacterBase* character)
 	if (ReloadTimeModifier.Value != 0.0f) {
 		character->ManaComponent->ReloadTime.AddModifier(ReloadTimeModifier);
 	}
+
+	character->ManaComponent->ModifyMana(character->ManaComponent->MaxMana.GetValue());
 }
 
 void UManaModifierPerkComponent::Teardown(ACharacterBase* character)
