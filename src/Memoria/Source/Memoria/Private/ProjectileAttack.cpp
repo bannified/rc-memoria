@@ -145,6 +145,14 @@ void AProjectileAttack::Fire()
 	LastFireTime = GetWorld()->TimeSeconds;
 
 	OnNormalFire.Broadcast(ownerCharacter, this);
+
+	if (result.Actor.Get() != nullptr) {
+		ProjectileFired.Broadcast(ownerCharacter, result.Actor.Get(), projectile);
+	}
+	else {
+		ProjectileFired.Broadcast(ownerCharacter, nullptr, projectile);
+	}
+	
 }
 
 void AProjectileAttack::ComplementaryFire()
@@ -223,6 +231,13 @@ void AProjectileAttack::ComplementaryFire()
 	LastFireTime = GetWorld()->TimeSeconds;
 
 	OnComplementaryFire.Broadcast(ownerCharacter, this);
+
+	if (result.Actor.Get() != nullptr) {
+		ProjectileFired.Broadcast(ownerCharacter, result.Actor.Get(), projectile);
+	}
+	else {
+		ProjectileFired.Broadcast(ownerCharacter, nullptr, projectile);
+	}
 }
 
 void AProjectileAttack::PlayFireEffects()
