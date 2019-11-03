@@ -129,6 +129,21 @@ void ASuppressionGameMode::CheckWinCondition()
 	WinGame();
 }
 
+void ASuppressionGameMode::RandomizePositionsOfObjectives()
+{
+	TArray< AObjectivePoint* > spawnPoints(ObjectivePoints);
+
+	for (ABase* objective : Objectives) {
+		if (spawnPoints.Num() <= 0) {
+			break;
+		}
+
+		int randomIndex = FMath::RandRange(0, spawnPoints.Num() - 1);
+		objective->SetActorLocation(spawnPoints[randomIndex]->GetActorLocation());
+		spawnPoints.RemoveAtSwap(randomIndex);
+	}
+}
+
 void ASuppressionGameMode::BeginPlay()
 {
     Super::BeginPlay();
