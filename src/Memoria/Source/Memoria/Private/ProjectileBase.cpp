@@ -19,6 +19,8 @@
 #include "PhysicalMaterials/PhysicalMaterial.h"
 #include "MemoriaDamageType.h"
 #include "GameFramework/DamageType.h"
+#include "PhysicsEngine/RadialForceActor.h"
+#include "PhysicsEngine/RadialForceComponent.h"
 
 // Sets default values
 AProjectileBase::AProjectileBase()
@@ -56,6 +58,7 @@ AProjectileBase::AProjectileBase()
 	Lifetime = 3.0f;
 	AoeRadius = 0.0f;
 	DamageDealt = 5.0f;
+	KnockbackImpulse = 100.0f;
 
 	TriggerRule = ETargettingRule::EnemiesOnly;
 }
@@ -93,9 +96,8 @@ void AProjectileBase::OnHitComponent(UPrimitiveComponent* HitComponent, AActor* 
 
 	}
 
-
 	if (OtherActor != nullptr) {
-		characterCast = Cast<ACharacterBase>(OtherActor);
+		characterCast = Cast<ACharacterBase>(OwningActor);
 		enemyCast = Cast<ACharacterBase>(OtherActor);
 
 		if (actorHealthComp != nullptr) {
@@ -171,13 +173,32 @@ void AProjectileBase::ResolveAllEffects(UHealthComponent* healthComp, ACharacter
 		finalDamageType = CriticalDamageType;
 	}
 
+	FActorSpawnParameters spawnParams;
+	//spawnParams.Owner = ownerCharacter;
+	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;	
+
 	if (AoeRadius > 0.0f) {
+		ARadialForceActor* forceSpawn = GetWorld()->SpawnActor<ARadialForceActor>(ARadialForceActor::StaticClass(), Hit.ImpactPoint, FRotator::ZeroRotator, spawnParams);
+		forceSpawn->GetForceComponent()->ImpulseStrength = KnockbackImpulse;
+		forceSpawn->GetForceComponent()->Radius = AoeRadius;
+		forceSpawn->FireImpulse();
+		if (characterBase != nullptr) {
+			characterBase->OnDealDamage.Broadcast(Hit.ImpactPoint, finalDamageType->GetDefaultObject<UDamageType>(), characterBase, enemy);
+		}
 		UGameplayStatics::ApplyRadialDamage(GetWorld(), DamageDealt, Hit.ImpactPoint, AoeRadius, finalDamageType, TArray<AActor*>(), OwningActor, OwningController, true, COLLISION_PROJECTILEAOEBLOCK);
-		UAISense_Hearing::ReportNoiseEvent(GetWorld(), Hit.ImpactPoint, 1.0F, OwningActor, AoeRadius);
+		//UAISense_Hearing::ReportNoiseEvent(GetWorld(), Hit.ImpactPoint, 1.0F, OwningActor, AoeRadius);
 	}
 	else {
+		if (characterBase != nullptr) {
+			characterBase->OnDealDamage.Broadcast(Hit.ImpactPoint, finalDamageType->GetDefaultObject<UDamageType>(), characterBase, enemy);
+		}
 		UGameplayStatics::ApplyDamage(Hit.GetActor(), DamageDealt, OwningController, OwningActor, finalDamageType);
-		UAISense_Hearing::ReportNoiseEvent(GetWorld(), Hit.ImpactPoint, 1.f, OwningActor);
+		//UAISense_Hearing::ReportNoiseEvent(GetWorld(), Hit.ImpactPoint, 1.f, OwningActor);
+		FVector direction = ProjectileMovement->Velocity;
+		direction.Normalize();
+		if (enemy != nullptr) {
+			enemy->GetCharacterMovement()->AddImpulse(direction * KnockbackImpulse);
+		}
 	}
 
 	if (enemy != nullptr) {

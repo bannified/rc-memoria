@@ -29,6 +29,7 @@ class UWorld;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCharacterBaseGameplayEvent, ACharacterBase*, Character);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCharacterBaseGameplayEvent_OneInt, ACharacterBase*, Character, int, value);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnDamageDealt, FVector, ImpactPoint, const class UDamageType*, DamageType, AActor*, DamageCauser, AActor*, Victim);
 
 UCLASS()
 class MEMORIA_API ACharacterBase : public ACharacter, public IGenericTeamAgentInterface
@@ -79,7 +80,7 @@ public:
 	UFUNCTION(NetMulticast, Reliable, WithValidation, BlueprintCallable, Category = "Equipment")
 	void EquipWeapon(TSubclassOf<AWeaponBase> Weapon);
 
-	
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase|Equipment")
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMeshComponent() { return 
 		(EquippedWeapon != nullptr) ? EquippedWeapon->WeaponMeshComponent : GetMesh(); 
 	}
@@ -131,6 +132,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "CharacterBase Events")
 	FCharacterBaseGameplayEvent_OneInt OnJumpEnd;
 
+	UPROPERTY(BlueprintCallable, BlueprintAssignable, Category = "CharacterBase Events")
+	FOnDamageDealt OnDealDamage;
+
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "CharacterBase Events")
 	FCharacterBaseGameplayEvent OnAttackTrigger_AnimNotify;
 
@@ -147,9 +151,37 @@ public:
 
     /* Gameplay Properties */
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
+	FModifiableAttribute StatCooldownReduction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
+	FModifiableAttribute StatAbilityDamage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
+	FModifiableAttribute StatBaseDamage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
+	FModifiableAttribute StatDamageMultiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
+	FModifiableAttribute StatBaseAttackSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
+	FModifiableAttribute StatBaseKnockback;
+
     /* General Gameplay Value used during GameModeStates, has no meaning in and of itself */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
     FModifiableAttribute GameplayScoreValue;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
+	FModifiableAttribute StatMovementSpeed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
+	FModifiableAttribute StatJumpVelocity;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
+	FModifiableAttribute StatGravityScale;
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase|Gameplay")
+	void UpdateMovementProperties();
 
 protected:
 
@@ -245,11 +277,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CharacterBase|Animation")
 	FORCEINLINE UAnimMontage* GetAnimWithName(const FName name)
 	{
-		return *(NameToAnimMap.Find(name));
+		UAnimMontage** montage = NameToAnimMap.Find(name);
+		if (montage == nullptr) return nullptr;
+		return *(montage);
 	}
 
 	UFUNCTION(BlueprintCallable, Category = "CharacterBase|Perks")
 	UCharacterPerkComponent* AddPerk(TSubclassOf<UCharacterPerkComponent> perkClass);
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase|Perks")
+	void RemoveAndTeardownPerk(UCharacterPerkComponent* perkClass);
 
 	/**
 	 * Initialization
@@ -422,6 +459,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Advanced Movement")
 	float b_CanBoost;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Advanced Movement")
 	FTimerHandle Boost_Cooldown_TimerHandle;
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable, Category = "Advanced Movement")
@@ -445,6 +483,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visuals")
 	FName NozzleEndSocketName;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "CharacterAttack|ProjectileAttack")
+	FName ReloadSocketName;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "CharacterBase|Audio")
+	USoundBase* ReloadingSound;
+	
+	UFUNCTION(BlueprintCallable, Category = "CharacterAttack|Attacks")
+	void ReInitializeAttacks(TArray<TSubclassOf<ACharacterAttack>> attackClasses);
 
 public:	
 	// Called every frame

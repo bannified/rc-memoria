@@ -19,6 +19,7 @@
 #include "Memoria.h"
 #include "GameTeam.h"
 #include "MultiJumpPerkComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "ManaComponent.h"
 
 // Sets default values
@@ -65,6 +66,7 @@ ACharacterBase::ACharacterBase()
 
 	BoosterEndSocketName = "booster_end";
 	NozzleEndSocketName = "nozzle_end";
+	ReloadSocketName = "reload";
 
 	Boost_Force = 3000.0f;
 	Boost_Air_Force = 3000.0f;
@@ -84,6 +86,22 @@ ACharacterBase::ACharacterBase()
 	GameplayScoreValue = 2.0f;
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	/**
+	 * Gameplay Stats defaults
+	 */
+	StatCooldownReduction = FModifiableAttribute(0.0f);
+	StatAbilityDamage = FModifiableAttribute(10.0f);
+
+	StatBaseDamage = FModifiableAttribute(5.0f);
+	StatDamageMultiplier = FModifiableAttribute(1.0f);
+	StatBaseAttackSpeed = FModifiableAttribute(1.0f);
+
+	StatBaseKnockback = FModifiableAttribute(100000.0f);
+
+	StatMovementSpeed = FModifiableAttribute(1000.0f);
+	StatJumpVelocity = FModifiableAttribute(1200.0f);
+	StatGravityScale = FModifiableAttribute(2.0f);
 
 	/**
 	 * AI Blackboard Defaults
@@ -133,8 +151,34 @@ void ACharacterBase::UnPossessedByPlayerControllerBase(APlayerControllerBase* co
 	OnReceiveUnPossessedByPlayerControllerBase(controllerBase);
 }
 
+void ACharacterBase::UpdateMovementProperties()
+{
+	GetCharacterMovement()->MaxWalkSpeed = StatMovementSpeed.GetValue();
+	GetCharacterMovement()->JumpZVelocity = StatJumpVelocity.GetValue();
+	GetCharacterMovement()->GravityScale = StatGravityScale.GetValue();
+}
+
 void ACharacterBase::DestroySelf_Implementation()
 {
+	for (int i = Attacks.Num() - 1; i >= 0; i--) {
+		ACharacterAttack* instance = Attacks[i];
+		if (instance == nullptr) {
+			continue;
+		}
+		instance->TeardownWithCharacter(this);
+		instance->Destroy();
+	}
+	Attacks.Empty();
+
+	for (int i = CharacterPerks.Num() - 1; i >= 0; i--) {
+		if (CharacterPerks[i] == nullptr) {
+			continue;
+		}
+		CharacterPerks[i]->Teardown(this);
+	}
+
+	CharacterPerks.Empty();
+
 	OnDestroy.Broadcast(this);
 	Destroy();
 }
@@ -210,9 +254,9 @@ void ACharacterBase::BeginPlay()
 		EquipWeapon(DefaultWeaponClass);
 	}
 
-	if (HealthComponent != nullptr) {
-		HealthComponent->DeathEvent.AddDynamic(this, &ACharacterBase::DestroySelf);
-	}
+	//if (HealthComponent != nullptr) {
+	//	HealthComponent->DeathEvent.AddDynamic(this, &ACharacterBase::DestroySelf);
+	//}
 
 	// Setup Perk Components
 	TArray< UActorComponent* > collectedActors = GetComponentsByClass(UCharacterPerkComponent::StaticClass());
@@ -227,9 +271,13 @@ void ACharacterBase::BeginPlay()
 		instance->SetupWithCharacter(this);
 	}
 
-	for (UCharacterPerkComponent* perk : CharacterPerks) {
-		perk->Setup(this);
+	for (int i = CharacterPerks.Num() - 1; i >= 0; i--) {
+		CharacterPerks[i]->Setup(this);
 	}
+
+	HealthComponent->FullRestoreHealthComponent();
+
+	UpdateMovementProperties();
 
 	OnBeginPlayComplete();
 }
@@ -238,9 +286,16 @@ UCharacterPerkComponent* ACharacterBase::AddPerk(TSubclassOf<UCharacterPerkCompo
 {
 	UCharacterPerkComponent* perk = NewObject<UCharacterPerkComponent>(this, perkClass);
 	perk->RegisterComponent();
+	CharacterPerks.Add(perk);
 	//perk->Setup(this);
 
 	return perk;
+}
+
+void ACharacterBase::RemoveAndTeardownPerk(UCharacterPerkComponent* perk)
+{
+	CharacterPerks.RemoveSingle(perk);
+	perk->Teardown(this);
 }
 
 void ACharacterBase::MoveForward(float value)
@@ -394,8 +449,16 @@ void ACharacterBase::Special2End()
 
 void ACharacterBase::ReloadStart()
 {
+	if (ManaComponent->IsReloading()) {
+		return;
+	}
+
 	ManaComponent->StartReload();
 
+	if (ReloadingSound != nullptr) {
+		USceneComponent* attachComponent = GetWeaponMeshComponent();
+		UGameplayStatics::SpawnSoundAttached(ReloadingSound, attachComponent, ReloadSocketName, FVector::ZeroVector, EAttachLocation::SnapToTargetIncludingScale, true);	
+	}
 	ReceiveReloadStart();
 }
 
@@ -467,6 +530,24 @@ void ACharacterBase::Pause()
 void ACharacterBase::Contextual()
 {
 	ReceiveContextual();
+}
+
+void ACharacterBase::ReInitializeAttacks(TArray<TSubclassOf<ACharacterAttack>> attackClasses)
+{
+	for (int i = Attacks.Num() - 1; i >= 0; i--) {
+		Attacks[i]->TeardownWithCharacter(this);
+		Attacks.RemoveAt(i);
+	}
+
+	AttacksClasses = attackClasses;
+
+	Attacks.Reserve(AttacksClasses.Num());
+	// Setup Action Components
+	for (TSubclassOf<ACharacterAttack> attackClass : AttacksClasses) {
+		ACharacterAttack* instance = GetWorld()->SpawnActor<ACharacterAttack>(attackClass, FVector::ZeroVector, FRotator::ZeroRotator);
+		instance->AttackIndex = Attacks.Add(instance);
+		instance->SetupWithCharacter(this);
+	}
 }
 
 void ACharacterBase::PlayBoostEffects_Implementation()

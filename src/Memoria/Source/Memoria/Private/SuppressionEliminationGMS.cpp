@@ -14,6 +14,10 @@ void ASuppressionEliminationGMS::Init()
 {
 	ASuppressionGameMode* gm = Cast<ASuppressionGameMode>(GameModeBase);
 
+	if (gm == nullptr) {
+		return;
+	}
+
 	FSuppressionCheckpoint cp = gm->Checkpoints[gm->GetCurrentCheckpointIndex()];
 	ObjectiveAssaultLifeTime = cp.ObjectiveAssaultLifeTime;
 	SelectedPattern = cp.Patterns[FMath::RandRange(0, cp.Patterns.Num() - 1)];
@@ -30,11 +34,15 @@ void ASuppressionEliminationGMS::OnStateEnter(AGameControllerBase* GameMode)
 
 void ASuppressionEliminationGMS::OnStateStart(AGameControllerBase* GameMode)
 {
+	if (GameMode == nullptr) {
+		return;
+	}
+
 	GameMode->OnEnemyUnitSpawned.AddDynamic(this, &ASuppressionEliminationGMS::HandleEnemySpawn);
 
 	for (ABase* objective : GameMode->Objectives) {
 		// Deactivate shields
-		objective->HealthComponent->DamageResist.BaseValue = 1.0f;
+		objective->Hide();
 	}
 
 	ReceiveOnStateStart(GameMode);
@@ -42,6 +50,10 @@ void ASuppressionEliminationGMS::OnStateStart(AGameControllerBase* GameMode)
 
 void ASuppressionEliminationGMS::OnStateTick(AGameControllerBase* GameMode, const float DeltaTime)
 {
+	if (GameMode == nullptr) {
+		return;
+	}
+
 	if (SelectedPattern.FiniteSpawnUnits.Num() == 0) {
 		return;
 	}
@@ -74,11 +86,19 @@ void ASuppressionEliminationGMS::OnStateStop(AGameControllerBase* GameMode)
 
 void ASuppressionEliminationGMS::OnStateExit(AGameControllerBase* GameMode)
 {
+	if (GameMode == nullptr) {
+		return;
+	}
+
+	GameMode->OnEnemyUnitSpawned.RemoveDynamic(this, &ASuppressionEliminationGMS::HandleEnemySpawn);
+
 	for (ABase* objective : GameMode->Objectives) {
 		// Deactivate shields
-		objective->HealthComponent->DamageResist.BaseValue = 0.0f;
+		objective->Reveal();
 	}
 	Super::OnStateExit(GameMode);
+
+	Destroy();
 }
 
 void ASuppressionEliminationGMS::HandleEnemySpawn(AActor* enemy)
@@ -110,6 +130,10 @@ void ASuppressionEliminationGMS::AddScoreToThreshold(AActor* Victim, AActor* Kil
 void ASuppressionEliminationGMS::TransitionToAssaultState()
 {
 	AObjectiveAssaultGameModeState* nextState = GetWorld()->SpawnActor<AObjectiveAssaultGameModeState>(ObjectiveAssaultGameModeStateClass, FVector::ZeroVector, FRotator::ZeroRotator);
+	if (nextState == nullptr || GameModeBase == nullptr) {
+		return;
+	}
+	
 	nextState->GameModeBase = GameModeBase;
 	nextState->Lifetime = ObjectiveAssaultLifeTime;
 	nextState->Init();

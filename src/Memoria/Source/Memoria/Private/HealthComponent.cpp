@@ -12,6 +12,8 @@ UHealthComponent::UHealthComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 
+	maxHealth = FModifiableAttribute(100.0f);
+	MaxShields = FModifiableAttribute(0.0f);
 	// ...
 }
 
@@ -52,13 +54,13 @@ void UHealthComponent::HandleTakeAnyDamage(AActor* DamagedActor, float Damage, c
 
 	float shieldsBefore = CurrentShields;
 
-	CurrentShields = FMath::Clamp(CurrentShields - Damage, 0.0f, maxHealth);
-	float shieldsDamageTaken = CurrentShields - shieldsBefore;
+	CurrentShields = FMath::Clamp(CurrentShields - Damage, 0.0f, MaxShields.GetValue());
+	float shieldsDamageTaken = shieldsBefore - CurrentShields;
 	float leftover = Damage - shieldsDamageTaken;
 
 	float healthBefore = currentHealth;
 
-	currentHealth = FMath::Clamp(currentHealth - leftover, 0.0f, maxHealth);
+	currentHealth = FMath::Clamp(currentHealth - leftover, 0.0f, maxHealth.GetValue());
 
 	float healthDamageTaken = healthBefore - currentHealth;
 
@@ -94,13 +96,20 @@ void UHealthComponent::Init()
 	bIsDead = false;
 }
 
+void UHealthComponent::FullRestoreHealthComponent()
+{
+	currentHealth = maxHealth.GetValue();
+	CurrentShields = MaxShields.GetValue();
+	bIsDead = false;
+}
+
 void UHealthComponent::AlterHealth(float Amount)
 {
 	// already dead
 	if (currentHealth <= 0)
 		return;
 
-	currentHealth = FMath::Clamp(currentHealth + Amount, 0.0f, maxHealth);
+	currentHealth = FMath::Clamp(currentHealth + Amount, 0.0f, maxHealth.GetValue());
 
 	UE_LOG(LogTemp, Log, TEXT("Health changed: %s (+%s)"), *FString::SanitizeFloat(currentHealth), *FString::SanitizeFloat(Amount));
 
@@ -115,7 +124,7 @@ void UHealthComponent::AlterHealth(float Amount)
 
 void UHealthComponent::AlterShields(float Amount)
 {
-	CurrentShields = FMath::Clamp(CurrentShields + Amount, 0.0f, MaxShields);
+	CurrentShields = FMath::Clamp(CurrentShields + Amount, 0.0f, MaxShields.GetValue());
 
 	UE_LOG(LogTemp, Log, TEXT("Shields changed: %s (+%s)"), *FString::SanitizeFloat(CurrentShields), *FString::SanitizeFloat(Amount));
 

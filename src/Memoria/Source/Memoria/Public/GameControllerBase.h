@@ -9,6 +9,7 @@
 #include "WaveLayout.h"
 #include "EnvironmentQuery/EnvQueryInstanceBlueprintWrapper.h"
 #include "EnvironmentQuery/EnvQueryTypes.h"
+#include "GameCustomProperties.h"
 #include "GameControllerBase.generated.h"
 
 class ULevelDataAsset;
@@ -39,8 +40,14 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MemGameModeBase|Level")
 	TArray< FSpawnPointArray > SpawnPointsGroups;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SuppressionGameMode")
+	TSubclassOf<ABase> ObjectiveClass;
+
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MemGameModeBase|Level")
     TArray<ABase*> Objectives;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GameControllerBase")
+	FGameCustomProperties CustomProperties;
 
     /**
 	 * State Machine

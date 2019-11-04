@@ -15,7 +15,13 @@ void AObjectiveAssaultGameModeState::OnStateEnter(AGameControllerBase* GameMode)
 {
 	this->GameModeBase = GameMode;
 
+	if (GameMode == nullptr) {
+		return;
+	}
+
 	for (ABase* objective : GameMode->Objectives) {
+		// show objective
+		objective->Reveal();
 		// Deactivate shields
 		UMemoriaStaticLibrary::SetSceneComponentEnabled(objective->DamageTriggerMesh, false);
 		UMemoriaStaticLibrary::SetSceneComponentEnabled(objective->DamageTriggerCollider, false);
@@ -31,12 +37,16 @@ void AObjectiveAssaultGameModeState::OnStateStart(AGameControllerBase* GameMode)
 
 void AObjectiveAssaultGameModeState::OnStateTick(AGameControllerBase* GameMode, const float DeltaTime)
 {
+	if (GameMode == nullptr) {
+		return;
+	}
+
 	RunningTime += DeltaTime;
 
 	if (RunningTime >= Lifetime) {
 		// Transition to PerpetualGameModeState
 		ASuppressionEliminationGMS* perpState = GetWorld()->SpawnActor<ASuppressionEliminationGMS>(SuppressionEliminationGMSClass, FVector::ZeroVector, FRotator::ZeroRotator);
-		
+		perpState->GameModeBase = GameMode;
 		perpState->Init();
 
 		GameModeBase->MoveToState(perpState);
@@ -51,20 +61,30 @@ void AObjectiveAssaultGameModeState::OnStateStop(AGameControllerBase* GameMode)
 
 void AObjectiveAssaultGameModeState::OnStateExit(AGameControllerBase* GameMode)
 {
-	Super::OnStateEnter(GameMode);
+	if (GameMode == nullptr) {
+		Destroy();
+		return;
+	}
 
 	for (ABase* objective : GameMode->Objectives) {
+		objective->Hide();
 		// Reactivate shields
 		UMemoriaStaticLibrary::SetSceneComponentEnabled(objective->DamageTriggerMesh, true);
 		UMemoriaStaticLibrary::SetSceneComponentEnabled(objective->DamageTriggerCollider, true);
 	}
 
 	ReceiveOnStateExit(GameMode);
+
+	Destroy();
 }
 
 void AObjectiveAssaultGameModeState::Init()
 {
 	ASuppressionGameMode* gm = Cast<ASuppressionGameMode>(GameModeBase);
+
+	if (gm == nullptr) {
+		return;
+	}
 
 	SuppressionEliminationGMSClass = gm->SuppressionEliminationGMSClass;
 }

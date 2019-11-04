@@ -35,7 +35,18 @@ public:
 	USphereComponent* DamageTriggerCollider;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
-	float StartingHealth;	
+	float StartingHealth;
+
+	UFUNCTION(BlueprintCallable, Category = "Gameplay")
+	void Hide();
+	UFUNCTION(BlueprintCallable, Category = "Gameplay")
+	void Reveal();
+
+protected:
+	UFUNCTION(BlueprintImplementableEvent, Category = "Gameplay")
+	void OnHide();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Gameplay")
+	void OnReveal();
 
 public:	
 	// Called every frame
