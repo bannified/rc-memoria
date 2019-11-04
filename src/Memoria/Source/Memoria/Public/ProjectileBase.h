@@ -74,6 +74,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	UProjectileMovementComponent* ProjectileMovement;
 
+	UFUNCTION(BlueprintCallable, Category = "Projectile|Setup")
+	void SetupWithCharacter(ACharacterBase* owningCharacter);
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ProjectileBase|Components")
 	UStaticMeshComponent* MeshComp;
@@ -92,7 +95,7 @@ protected:
 
 	void DestroySelf();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, Category = "Events")
 	void OnHitComponent(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	// Called when the game starts or when spawned
@@ -107,6 +110,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "ProjectileBase|Gameplay")
 	void AddIgnoredActor(AActor* actor);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "ProjectileBase")
+	void OnReceiveBeginPlay();
 
 private:
 
