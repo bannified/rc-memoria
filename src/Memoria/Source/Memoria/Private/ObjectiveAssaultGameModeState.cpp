@@ -73,6 +73,12 @@ void AObjectiveAssaultGameModeState::OnStateExit(AGameControllerBase* GameMode)
 		UMemoriaStaticLibrary::SetSceneComponentEnabled(objective->DamageTriggerCollider, true);
 	}
 
+	ASuppressionGameMode* gm = Cast<ASuppressionGameMode>(GameMode);
+
+	if (gm) {
+		gm->RandomizePositionsOfObjectives();
+	}
+
 	ReceiveOnStateExit(GameMode);
 
 	Destroy();

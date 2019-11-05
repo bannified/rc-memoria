@@ -63,6 +63,25 @@ AProjectileBase::AProjectileBase()
 	TriggerRule = ETargettingRule::EnemiesOnly;
 }
 
+void AProjectileBase::SetupWithCharacter(ACharacterBase* owningCharacter)
+{
+	TeamNumber = owningCharacter->GetTeamNumber();
+	SetOwner(owningCharacter);
+	OwningController = owningCharacter->GetController();
+	OwningActor = owningCharacter;
+	ClearIgnoredActors();
+	AddIgnoredActor(owningCharacter);
+	AddIgnoredActor(owningCharacter->EquippedWeapon);
+
+	for (AActor* actor : owningCharacter->ActorsToIgnoreWhileAttacking) {
+		AddIgnoredActor(actor);
+	}
+
+	// set projectile damage.
+	DamageDealt = owningCharacter->StatDamageMultiplier.GetValue() * (owningCharacter->StatBaseDamage.GetValue() + DamageDealt);
+	KnockbackImpulse = KnockbackImpulse + owningCharacter->StatBaseKnockback.GetValue();
+}
+
 void AProjectileBase::DestroySelf()
 {
 	Destroy();
@@ -142,6 +161,8 @@ void AProjectileBase::BeginPlay()
 										   true);
 	
 	CollisionComp->OnComponentHit.AddDynamic(this, &AProjectileBase::OnHitComponent);
+
+	OnReceiveBeginPlay();
 }
 
 // Called every frame
