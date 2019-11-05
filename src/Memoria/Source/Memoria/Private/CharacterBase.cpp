@@ -70,7 +70,7 @@ ACharacterBase::ACharacterBase()
 
 	Boost_Force = 3000.0f;
 	Boost_Air_Force = 3000.0f;
-	Boost_Cooldown = 10.0f;
+	Boost_Cooldown = FModifiableAttribute(1.2f);
 	b_CanBoost = true;
 
 	GetCharacterMovement()->BrakingFriction = 1.0f;
@@ -572,10 +572,10 @@ void ACharacterBase::BoostAction_Implementation()
 	GetCharacterMovement()->UpdateComponentVelocity();
 
 	if (GetCharacterMovement()->IsMovingOnGround()) {
-		AddImpulseToCharacterInDirectionWithMagnitude(inputDirection, Boost_Force);
+		AddImpulseToCharacterInDirectionWithMagnitude(inputDirection, Boost_Force.GetValue());
 	}
 	else {
-		AddImpulseToCharacterInDirectionWithMagnitude(inputDirection, Boost_Air_Force);
+		AddImpulseToCharacterInDirectionWithMagnitude(inputDirection, Boost_Air_Force.GetValue());
 	}
 
 	this->b_CanBoost = false;
@@ -588,7 +588,7 @@ void ACharacterBase::BoostAction_Implementation()
 	{
 		this->b_CanBoost = true;
 		OnBoostOffCooldown.Broadcast(this);
-	}, Boost_Cooldown, false);
+	}, Boost_Cooldown.GetValue(), false);
 }
 
 bool ACharacterBase::BoostAction_Validate()

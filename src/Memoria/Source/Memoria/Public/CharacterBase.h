@@ -448,13 +448,13 @@ protected:
 	void PlayBoostEffects();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Advanced Movement")
-	float Boost_Force;
+	FModifiableAttribute Boost_Force;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Advanced Movement")
-	float Boost_Air_Force;
+	FModifiableAttribute Boost_Air_Force;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Advanced Movement")
-	float Boost_Cooldown;
+	FModifiableAttribute Boost_Cooldown;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Advanced Movement")
 	float b_CanBoost;
