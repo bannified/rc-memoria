@@ -447,6 +447,7 @@ protected:
 	UFUNCTION(NetMulticast, Reliable, BlueprintCallable, Category = "Advanced Movement")
 	void PlayBoostEffects();
 
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Advanced Movement")
 	FModifiableAttribute Boost_Force;
 
@@ -456,6 +457,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Advanced Movement")
 	FModifiableAttribute Boost_Cooldown;
 
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Advanced Movement")
 	float b_CanBoost;
 
