@@ -180,6 +180,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
 	FModifiableAttribute StatGravityScale;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
+	FModifiableAttribute StatCritChance;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
+	FModifiableAttribute StatCritDamageMultiplier;
+
 	UFUNCTION(BlueprintCallable, Category = "CharacterBase|Gameplay")
 	void UpdateMovementProperties();
 

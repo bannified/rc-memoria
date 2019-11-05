@@ -189,8 +189,11 @@ void AProjectileBase::ResolveAllEffects(UHealthComponent* healthComp, ACharacter
 	EPhysicalSurface surfaceType = SurfaceType_Default;
 	surfaceType = UPhysicalMaterial::DetermineSurfaceType(Hit.PhysMaterial.Get());
 
-	if (surfaceType == SURFACE_CRITICAL) {
-		DamageDealt *= CriticalMultiplier.GetValue();
+	if (characterBase != nullptr && 
+		(surfaceType == SURFACE_CRITICAL || 
+		characterBase->StatCritChance.GetValue() > FMath::RandRange(0.0f, 1.0f))) 
+	{
+		finalDamage *= characterBase->StatCritDamageMultiplier.GetValue();
 		finalDamageType = CriticalDamageType;
 	}
 
@@ -206,14 +209,14 @@ void AProjectileBase::ResolveAllEffects(UHealthComponent* healthComp, ACharacter
 		if (characterBase != nullptr) {
 			characterBase->OnDealDamage.Broadcast(Hit.ImpactPoint, finalDamageType->GetDefaultObject<UDamageType>(), characterBase, enemy);
 		}
-		UGameplayStatics::ApplyRadialDamage(GetWorld(), DamageDealt, Hit.ImpactPoint, AoeRadius, finalDamageType, TArray<AActor*>(), OwningActor, OwningController, true, COLLISION_PROJECTILEAOEBLOCK);
+		UGameplayStatics::ApplyRadialDamage(GetWorld(), finalDamage, Hit.ImpactPoint, AoeRadius, finalDamageType, TArray<AActor*>(), OwningActor, OwningController, true, COLLISION_PROJECTILEAOEBLOCK);
 		//UAISense_Hearing::ReportNoiseEvent(GetWorld(), Hit.ImpactPoint, 1.0F, OwningActor, AoeRadius);
 	}
 	else {
 		if (characterBase != nullptr) {
 			characterBase->OnDealDamage.Broadcast(Hit.ImpactPoint, finalDamageType->GetDefaultObject<UDamageType>(), characterBase, enemy);
 		}
-		UGameplayStatics::ApplyDamage(Hit.GetActor(), DamageDealt, OwningController, OwningActor, finalDamageType);
+		UGameplayStatics::ApplyDamage(Hit.GetActor(), finalDamage, OwningController, OwningActor, finalDamageType);
 		//UAISense_Hearing::ReportNoiseEvent(GetWorld(), Hit.ImpactPoint, 1.f, OwningActor);
 		FVector direction = ProjectileMovement->Velocity;
 		direction.Normalize();

@@ -103,6 +103,9 @@ ACharacterBase::ACharacterBase()
 	StatJumpVelocity = FModifiableAttribute(1200.0f);
 	StatGravityScale = FModifiableAttribute(2.0f);
 
+	StatCritChance = FModifiableAttribute(0.0f);
+	StatCritDamageMultiplier = FModifiableAttribute(2.0f);
+
 	/**
 	 * AI Blackboard Defaults
 	 */
