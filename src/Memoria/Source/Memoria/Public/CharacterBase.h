@@ -180,6 +180,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
 	FModifiableAttribute StatGravityScale;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
+	FModifiableAttribute StatCritChance;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Gameplay")
+	FModifiableAttribute StatCritDamageMultiplier;
+
 	UFUNCTION(BlueprintCallable, Category = "CharacterBase|Gameplay")
 	void UpdateMovementProperties();
 
@@ -447,15 +452,17 @@ protected:
 	UFUNCTION(NetMulticast, Reliable, BlueprintCallable, Category = "Advanced Movement")
 	void PlayBoostEffects();
 
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Advanced Movement")
-	float Boost_Force;
+	FModifiableAttribute Boost_Force;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Advanced Movement")
-	float Boost_Air_Force;
+	FModifiableAttribute Boost_Air_Force;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Advanced Movement")
-	float Boost_Cooldown;
+	FModifiableAttribute Boost_Cooldown;
 
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Advanced Movement")
 	float b_CanBoost;
 
