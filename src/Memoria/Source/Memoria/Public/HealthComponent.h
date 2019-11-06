@@ -110,6 +110,9 @@ public:
 	FOnHealthChangedSignature OnShieldsChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnHealthChangedSignature OnOverallHealthChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnDeathSignature OnDeathEvent;
 
 	UFUNCTION(BlueprintCallable, Category = "HealthComponent")
