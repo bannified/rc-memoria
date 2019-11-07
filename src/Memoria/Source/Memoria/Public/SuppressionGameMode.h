@@ -27,6 +27,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SuppressionGameMode")
 	int NumStartingObjectives;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SuppressionGameMode")
+	float ObjectiveStartingHealth;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "SuppressionGameMode")
 	TArray<FSuppressionCheckpoint> Checkpoints;
 
@@ -42,6 +45,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "SuppressionGameMode")
 	void CheckWinCondition();
+
+	UFUNCTION(BlueprintCallable, Category = "SuppressionGameMode")
+	void RandomizePositionsOfObjectives();
 
 protected:
     // Called when the game starts or when spawned

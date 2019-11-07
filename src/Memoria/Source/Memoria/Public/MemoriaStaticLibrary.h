@@ -38,6 +38,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "ModifiableAttribute")
 	static float GetModifiableAttributeValue(UPARAM(ref) FModifiableAttribute& attribute);
 
+	UFUNCTION(BlueprintCallable, Category = "ModifiableAttribute")
+	static float SetModifiableAttributeBaseValue(UPARAM(ref) FModifiableAttribute& attribute, float value);
+
 	UFUNCTION(BlueprintCallable, Category = "Actor")
 	static void SetActorEnabled(UPARAM(ref) AActor* actor, bool enabled);
 

@@ -70,7 +70,7 @@ ACharacterBase::ACharacterBase()
 
 	Boost_Force = 3000.0f;
 	Boost_Air_Force = 3000.0f;
-	Boost_Cooldown = 10.0f;
+	Boost_Cooldown = FModifiableAttribute(1.2f);
 	b_CanBoost = true;
 
 	GetCharacterMovement()->BrakingFriction = 1.0f;
@@ -102,6 +102,9 @@ ACharacterBase::ACharacterBase()
 	StatMovementSpeed = FModifiableAttribute(1000.0f);
 	StatJumpVelocity = FModifiableAttribute(1200.0f);
 	StatGravityScale = FModifiableAttribute(2.0f);
+
+	StatCritChance = FModifiableAttribute(0.0f);
+	StatCritDamageMultiplier = FModifiableAttribute(2.0f);
 
 	/**
 	 * AI Blackboard Defaults
@@ -160,6 +163,25 @@ void ACharacterBase::UpdateMovementProperties()
 
 void ACharacterBase::DestroySelf_Implementation()
 {
+	for (int i = Attacks.Num() - 1; i >= 0; i--) {
+		ACharacterAttack* instance = Attacks[i];
+		if (instance == nullptr) {
+			continue;
+		}
+		instance->TeardownWithCharacter(this);
+		instance->Destroy();
+	}
+	Attacks.Empty();
+
+	for (int i = CharacterPerks.Num() - 1; i >= 0; i--) {
+		if (CharacterPerks[i] == nullptr) {
+			continue;
+		}
+		CharacterPerks[i]->Teardown(this);
+	}
+
+	CharacterPerks.Empty();
+
 	OnDestroy.Broadcast(this);
 	Destroy();
 }
@@ -235,9 +257,9 @@ void ACharacterBase::BeginPlay()
 		EquipWeapon(DefaultWeaponClass);
 	}
 
-	if (HealthComponent != nullptr) {
-		HealthComponent->DeathEvent.AddDynamic(this, &ACharacterBase::DestroySelf);
-	}
+	//if (HealthComponent != nullptr) {
+	//	HealthComponent->DeathEvent.AddDynamic(this, &ACharacterBase::DestroySelf);
+	//}
 
 	// Setup Perk Components
 	TArray< UActorComponent* > collectedActors = GetComponentsByClass(UCharacterPerkComponent::StaticClass());
@@ -553,10 +575,10 @@ void ACharacterBase::BoostAction_Implementation()
 	GetCharacterMovement()->UpdateComponentVelocity();
 
 	if (GetCharacterMovement()->IsMovingOnGround()) {
-		AddImpulseToCharacterInDirectionWithMagnitude(inputDirection, Boost_Force);
+		AddImpulseToCharacterInDirectionWithMagnitude(inputDirection, Boost_Force.GetValue());
 	}
 	else {
-		AddImpulseToCharacterInDirectionWithMagnitude(inputDirection, Boost_Air_Force);
+		AddImpulseToCharacterInDirectionWithMagnitude(inputDirection, Boost_Air_Force.GetValue());
 	}
 
 	this->b_CanBoost = false;
@@ -569,7 +591,7 @@ void ACharacterBase::BoostAction_Implementation()
 	{
 		this->b_CanBoost = true;
 		OnBoostOffCooldown.Broadcast(this);
-	}, Boost_Cooldown, false);
+	}, Boost_Cooldown.GetValue(), false);
 }
 
 bool ACharacterBase::BoostAction_Validate()

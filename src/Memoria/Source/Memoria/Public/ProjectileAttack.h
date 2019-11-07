@@ -10,6 +10,8 @@ class AProjectileBase;
 class USoundBase;
 class UParticleSystem;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FProjectileFiredHandler, ACharacterBase*, ownerCharacter, AActor*, targetCharacter, AProjectileBase*, spawnedProjectile);
+
 /**
  * 
  */
@@ -63,6 +65,9 @@ public:
 	FAttackHandler OnComplementaryFire;
 	UFUNCTION(BlueprintCallable, Category = "CharacterAttack")
 	virtual void PlayFireEffects();
+
+	UPROPERTY(BlueprintCallable, BlueprintAssignable, Category = "CharacterAttack")
+	FProjectileFiredHandler ProjectileFired;
 
 protected:	
 

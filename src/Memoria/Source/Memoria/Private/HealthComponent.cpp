@@ -67,6 +67,8 @@ void UHealthComponent::HandleTakeAnyDamage(AActor* DamagedActor, float Damage, c
 	OnHealthChanged.Broadcast(this, currentHealth, healthDamageTaken, DamageType, InstigatedBy, DamageCauser);
 	OnShieldsChanged.Broadcast(this, CurrentShields, shieldsDamageTaken, DamageType, InstigatedBy, DamageCauser);
 
+	OnOverallHealthChanged.Broadcast(this, currentHealth + CurrentShields, healthDamageTaken + shieldsDamageTaken, DamageType, InstigatedBy, DamageCauser);
+
 	bIsDead = currentHealth <= 0.0f;
 
 	if (bIsDead)

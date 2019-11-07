@@ -63,6 +63,25 @@ AProjectileBase::AProjectileBase()
 	TriggerRule = ETargettingRule::EnemiesOnly;
 }
 
+void AProjectileBase::SetupWithCharacter(ACharacterBase* owningCharacter)
+{
+	TeamNumber = owningCharacter->GetTeamNumber();
+	SetOwner(owningCharacter);
+	OwningController = owningCharacter->GetController();
+	OwningActor = owningCharacter;
+	ClearIgnoredActors();
+	AddIgnoredActor(owningCharacter);
+	AddIgnoredActor(owningCharacter->EquippedWeapon);
+
+	for (AActor* actor : owningCharacter->ActorsToIgnoreWhileAttacking) {
+		AddIgnoredActor(actor);
+	}
+
+	// set projectile damage.
+	DamageDealt = owningCharacter->StatDamageMultiplier.GetValue() * (owningCharacter->StatBaseDamage.GetValue() + DamageDealt);
+	KnockbackImpulse = KnockbackImpulse + owningCharacter->StatBaseKnockback.GetValue();
+}
+
 void AProjectileBase::DestroySelf()
 {
 	Destroy();
@@ -142,6 +161,8 @@ void AProjectileBase::BeginPlay()
 										   true);
 	
 	CollisionComp->OnComponentHit.AddDynamic(this, &AProjectileBase::OnHitComponent);
+
+	OnReceiveBeginPlay();
 }
 
 // Called every frame
@@ -168,32 +189,35 @@ void AProjectileBase::ResolveAllEffects(UHealthComponent* healthComp, ACharacter
 	EPhysicalSurface surfaceType = SurfaceType_Default;
 	surfaceType = UPhysicalMaterial::DetermineSurfaceType(Hit.PhysMaterial.Get());
 
-	if (surfaceType == SURFACE_CRITICAL) {
-		DamageDealt *= CriticalMultiplier.GetValue();
+	if (characterBase != nullptr && 
+		(surfaceType == SURFACE_CRITICAL || 
+		characterBase->StatCritChance.GetValue() > FMath::RandRange(0.0f, 1.0f))) 
+	{
+		finalDamage *= characterBase->StatCritDamageMultiplier.GetValue();
 		finalDamageType = CriticalDamageType;
 	}
 
 	FActorSpawnParameters spawnParams;
 	//spawnParams.Owner = ownerCharacter;
-	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-
-	
+	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;	
 
 	if (AoeRadius > 0.0f) {
-		UGameplayStatics::ApplyRadialDamage(GetWorld(), DamageDealt, Hit.ImpactPoint, AoeRadius, finalDamageType, TArray<AActor*>(), OwningActor, OwningController, true, COLLISION_PROJECTILEAOEBLOCK);
-		UAISense_Hearing::ReportNoiseEvent(GetWorld(), Hit.ImpactPoint, 1.0F, OwningActor, AoeRadius);
-		characterBase->OnDealDamage.Broadcast(Hit.ImpactPoint, finalDamageType->GetDefaultObject<UDamageType>(), characterBase, enemy);
-
 		ARadialForceActor* forceSpawn = GetWorld()->SpawnActor<ARadialForceActor>(ARadialForceActor::StaticClass(), Hit.ImpactPoint, FRotator::ZeroRotator, spawnParams);
 		forceSpawn->GetForceComponent()->ImpulseStrength = KnockbackImpulse;
 		forceSpawn->GetForceComponent()->Radius = AoeRadius;
 		forceSpawn->FireImpulse();
+		if (characterBase != nullptr) {
+			characterBase->OnDealDamage.Broadcast(Hit.ImpactPoint, finalDamageType->GetDefaultObject<UDamageType>(), characterBase, enemy);
+		}
+		UGameplayStatics::ApplyRadialDamage(GetWorld(), finalDamage, Hit.ImpactPoint, AoeRadius, finalDamageType, TArray<AActor*>(), OwningActor, OwningController, true, COLLISION_PROJECTILEAOEBLOCK);
+		//UAISense_Hearing::ReportNoiseEvent(GetWorld(), Hit.ImpactPoint, 1.0F, OwningActor, AoeRadius);
 	}
 	else {
-		UGameplayStatics::ApplyDamage(Hit.GetActor(), DamageDealt, OwningController, OwningActor, finalDamageType);
-		UAISense_Hearing::ReportNoiseEvent(GetWorld(), Hit.ImpactPoint, 1.f, OwningActor);
-		characterBase->OnDealDamage.Broadcast(Hit.ImpactPoint, finalDamageType->GetDefaultObject<UDamageType>(), characterBase, enemy);
-
+		if (characterBase != nullptr) {
+			characterBase->OnDealDamage.Broadcast(Hit.ImpactPoint, finalDamageType->GetDefaultObject<UDamageType>(), characterBase, enemy);
+		}
+		UGameplayStatics::ApplyDamage(Hit.GetActor(), finalDamage, OwningController, OwningActor, finalDamageType);
+		//UAISense_Hearing::ReportNoiseEvent(GetWorld(), Hit.ImpactPoint, 1.f, OwningActor);
 		FVector direction = ProjectileMovement->Velocity;
 		direction.Normalize();
 		if (enemy != nullptr) {

@@ -71,9 +71,12 @@ void ASuppressionGameMode::StartGame()
 		ABase* nObjective = GetWorld()->SpawnActor<ABase>(ObjectiveClass, finalPos, FRotator::ZeroRotator, params);
 		Objectives.Add(nObjective);
 
+		nObjective->HealthComponent->maxHealth.BaseValue = ObjectiveStartingHealth;
 		nObjective->HealthComponent->maxHealth.AddModifier(FAttributeModifier(CustomProperties.ObjectiveHealthModifier - 1.0f, EAttributeModType::PercentAdd));
 		nObjective->HealthComponent->FullRestoreHealthComponent();
 		nObjective->HealthComponent->DeathEvent.AddDynamic(this, &ASuppressionGameMode::CheckWinCondition);
+
+		nObjective->Hide();
 	}
 
 	AGameModeState* nextState = GetWorld()->SpawnActor<AGameModeState>(SuppressionEliminationGMSClass, FVector::ZeroVector, FRotator::ZeroRotator);
@@ -124,6 +127,21 @@ void ASuppressionGameMode::CheckWinCondition()
 	}
 
 	WinGame();
+}
+
+void ASuppressionGameMode::RandomizePositionsOfObjectives()
+{
+	TArray< AObjectivePoint* > spawnPoints(ObjectivePoints);
+
+	for (ABase* objective : Objectives) {
+		if (spawnPoints.Num() <= 0) {
+			break;
+		}
+
+		int randomIndex = FMath::RandRange(0, spawnPoints.Num() - 1);
+		objective->SetActorLocation(spawnPoints[randomIndex]->GetActorLocation());
+		spawnPoints.RemoveAtSwap(randomIndex);
+	}
 }
 
 void ASuppressionGameMode::BeginPlay()
