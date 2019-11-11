@@ -20,7 +20,7 @@ AProjectileAttack::AProjectileAttack()
 void AProjectileAttack::SetupWithCharacter(ACharacterBase* ownerCharacter)
 {
 	Super::SetupWithCharacter(ownerCharacter);
-	LastFireTime = -Cooldown.GetValue();
+	LastFireTime = -GetCooldown();
 
 	ReceiveCharacterSetup(ownerCharacter);
 }
@@ -33,9 +33,9 @@ void AProjectileAttack::AttackStart()
 		return;
 	}
 
-	float firstDelay = FMath::Max(LastFireTime + Cooldown.GetValue() - GetWorld()->TimeSeconds, 0.00f);
+	float firstDelay = FMath::Max(LastFireTime + GetCooldown() - GetWorld()->TimeSeconds, 0.00f);
 
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AProjectileAttack::Fire, Cooldown.GetValue(), true, firstDelay);
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AProjectileAttack::Fire, GetCooldown(), true, firstDelay);
 
 	ownerCharacter->bUseControllerRotationYaw = true;
 }

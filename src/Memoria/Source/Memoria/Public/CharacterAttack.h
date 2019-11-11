@@ -89,6 +89,9 @@ public:
 	UFUNCTION()
 	void StartReloadingOnCharacter(ACharacterBase* character, ACharacterAttack* attack);
 
+	UFUNCTION(BlueprintCallable, Category = "CharacterAttack")
+	void GoOnCooldown();
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CharacterAttack")
 	ACharacterBase* ownerCharacter;

@@ -40,7 +40,7 @@ void ACharacterAttack::AttackStart()
 void ACharacterAttack::AttackEnd()
 {
 	ReceiveAttackEnd();
-}
+} 
 
 void ACharacterAttack::OffCooldown()
 {
@@ -60,6 +60,13 @@ void ACharacterAttack::StartReloadingOnCharacter(ACharacterBase* character, ACha
 	}
 
 	character->ManaComponent->StartReload();
+}
+
+void ACharacterAttack::GoOnCooldown()
+{
+	b_OffCooldown = false;
+
+	GetWorldTimerManager().SetTimer(CooldownTimerHandle, this, &ACharacterAttack::OffCooldown, GetCooldown(), false);
 }
 
 float ACharacterAttack::GetCooldown()
