@@ -121,6 +121,12 @@ void ASuppressionGameMode::CheckWinCondition()
 	}
 
 	for (ABase* base : Objectives) {
+		if (base == nullptr) {
+			continue;
+		}
+		if (base->HealthComponent == nullptr) {
+			continue;
+		}
 		if (base->HealthComponent->currentHealth > 0) {
 			return;
 		}
