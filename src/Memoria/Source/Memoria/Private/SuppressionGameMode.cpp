@@ -94,6 +94,12 @@ int ASuppressionGameMode::GetCurrentCheckpointIndex()
 	for (int i = 0; i < Objectives.Num(); i++)
 	{
 		ABase* base = Objectives[i];
+		if (base == nullptr) {
+			continue;
+		}
+		if (base->HealthComponent == nullptr) {
+			continue;
+		}
 		totalHp += base->HealthComponent->maxHealth.GetValue();
 		currentHp += base->HealthComponent->currentHealth;
 	}
@@ -140,6 +146,10 @@ void ASuppressionGameMode::RandomizePositionsOfObjectives()
 	TArray< AObjectivePoint* > spawnPoints(ObjectivePoints);
 
 	for (ABase* objective : Objectives) {
+		if (objective == nullptr) {
+			continue;
+		}
+
 		if (spawnPoints.Num() <= 0) {
 			break;
 		}

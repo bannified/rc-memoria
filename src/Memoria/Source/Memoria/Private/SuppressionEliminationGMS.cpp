@@ -41,6 +41,9 @@ void ASuppressionEliminationGMS::OnStateStart(AGameControllerBase* GameMode)
 	GameMode->OnEnemyUnitSpawned.AddDynamic(this, &ASuppressionEliminationGMS::HandleEnemySpawn);
 
 	for (ABase* objective : GameMode->Objectives) {
+		if (objective == nullptr) {
+			continue;
+		}
 		// Deactivate shields
 		objective->Hide();
 	}
@@ -93,6 +96,9 @@ void ASuppressionEliminationGMS::OnStateExit(AGameControllerBase* GameMode)
 	GameMode->OnEnemyUnitSpawned.RemoveDynamic(this, &ASuppressionEliminationGMS::HandleEnemySpawn);
 
 	for (ABase* objective : GameMode->Objectives) {
+		if (objective == nullptr) {
+			continue;
+		}
 		// Deactivate shields
 		objective->Reveal();
 	}

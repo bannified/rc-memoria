@@ -53,7 +53,7 @@ void ABase::BeginPlay()
 
 void ABase::Hide()
 {
-a	SetActorHiddenInGame(true);
+	SetActorHiddenInGame(true);
 	SetActorEnableCollision(false);
 
 	OnHide();

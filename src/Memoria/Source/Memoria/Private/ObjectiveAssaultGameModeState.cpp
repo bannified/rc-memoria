@@ -20,6 +20,9 @@ void AObjectiveAssaultGameModeState::OnStateEnter(AGameControllerBase* GameMode)
 	}
 
 	for (ABase* objective : GameMode->Objectives) {
+		if (objective == nullptr) {
+			continue;
+		}
 		// show objective
 		objective->Reveal();
 		// Deactivate shields
@@ -67,6 +70,9 @@ void AObjectiveAssaultGameModeState::OnStateExit(AGameControllerBase* GameMode)
 	}
 
 	for (ABase* objective : GameMode->Objectives) {
+		if (objective == nullptr) {
+			continue;
+		}
 		objective->Hide();
 		// Reactivate shields
 		UMemoriaStaticLibrary::SetSceneComponentEnabled(objective->DamageTriggerMesh, true);
