@@ -110,10 +110,10 @@ int ASuppressionGameMode::GetCurrentCheckpointIndex()
 	float progress = currentHp / totalHp;
 	int index;
 
-	//for (index = Checkpoints.Num() - 1; index >= 0; index--)
-	for (index = 0; index < Checkpoints.Num(); index++)
+	for (index = Checkpoints.Num() - 1; index >= 0; index--)
+	//for (index = 0; index < Checkpoints.Num(); index++)
 	{
-		if ((progress * 100) >= (Checkpoints[index].TargetLevelProgress)) {
+		if ((progress * 100) <= (Checkpoints[index].TargetLevelProgress)) {
 			break;
 		}
 	}
