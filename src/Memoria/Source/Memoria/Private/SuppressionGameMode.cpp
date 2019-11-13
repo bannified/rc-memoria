@@ -90,6 +90,7 @@ int ASuppressionGameMode::GetCurrentCheckpointIndex()
 {
 	float totalHp = 0;
 	float currentHp = 0;
+	float lastHp = 100;
 
 	for (int i = 0; i < Objectives.Num(); i++)
 	{
@@ -100,21 +101,24 @@ int ASuppressionGameMode::GetCurrentCheckpointIndex()
 		if (base->HealthComponent == nullptr) {
 			continue;
 		}
-		totalHp += base->HealthComponent->maxHealth.GetValue();
+		lastHp = base->HealthComponent->maxHealth.GetValue();
 		currentHp += base->HealthComponent->currentHealth;
 	}
+
+	totalHp = ObjectiveStartingHealth * Objectives.Num();
 
 	float progress = currentHp / totalHp;
 	int index;
 
-	for (index = Checkpoints.Num() - 1; index >= 0; index--)
+	//for (index = Checkpoints.Num() - 1; index >= 0; index--)
+	for (index = 0; index < Checkpoints.Num(); index++)
 	{
-		if (progress >= Checkpoints[index].TargetLevelProgress) {
+		if ((progress * 100) >= (Checkpoints[index].TargetLevelProgress)) {
 			break;
 		}
 	}
 
-	index = FMath::Clamp(index + 1, 0, Checkpoints.Num() - 1);
+	index = FMath::Clamp(index, 0, Checkpoints.Num() - 1);
 
 	return index;
 }
